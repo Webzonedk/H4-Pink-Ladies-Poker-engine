@@ -17,7 +17,7 @@ class PrivateRuleManager {
     ];
     const SUITS = ["H", "D", "C", "S"];
 
-    ruleManager.CompareHands = (pokerTable) => {
+    CompareHands = (pokerTable) => {
       //temporary array of cards from
       let playerHands = [];
       //  console.log("pokertable: ", pokerTable);
@@ -103,7 +103,7 @@ class PrivateRuleManager {
 
     //step 4 return the users with the highest card value and highest shift.
 
-    ruleManager.analyzeHand = (hand) => {
+    analyzeHand = (hand) => {
       console.log("Analyzing ------------------------------- Analyzing");
       let faces = hand.map((card) => FACES.indexOf(card.slice(0, -1)));
       let suits = hand.map((card) => SUITS.indexOf(card.slice(-1)));
@@ -391,4 +391,4 @@ class RuleManager {
 
 // for(hand of testHands) console.log(hand + ": " + analyzeHand(hand));
 
-module.exports = RuleManager;
+export default RuleManager;

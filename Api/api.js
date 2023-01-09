@@ -106,7 +106,7 @@ app.get('/api/testCardDeck', (req, res) => {
 //test rulemanager
 app.get('/api/ruleManagerTest', (req, res) => {
 
-  const ruleManager = RuleManager.getInstance();
+  let ruleManager = RuleManager.getInstance();
   const PokerTable = require('./LogicHandlers/PokerTable');
   const User = require('./Models/User');
 
