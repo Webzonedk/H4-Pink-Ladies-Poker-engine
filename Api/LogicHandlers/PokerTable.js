@@ -1,4 +1,4 @@
-const CleaningLady = require('./CleaningLady');
+//const CleaningLady = require('./CleaningLady');
 class PokerTable {
 
 
@@ -41,7 +41,7 @@ class PokerTable {
             //kick player
             if (users[index].Saldo === 0) {
 
-                CleaningLady.MoveUserToWaitingUsers(users[index].userID);
+              //  CleaningLady.MoveUserToWaitingUsers(users[index].userID);
             }
 
         }
@@ -52,5 +52,7 @@ class PokerTable {
 
     }
 //this is a test
+
 };
 
+module.exports = {PokerTable: PokerTable};

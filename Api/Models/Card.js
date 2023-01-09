@@ -1,7 +1,7 @@
-let Card = class {
+  class Card{
     Name;
     
     constructor() {
-    }
+    };
 };
 

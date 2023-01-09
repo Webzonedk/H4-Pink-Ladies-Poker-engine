@@ -1,11 +1,15 @@
+//"use strict";
 const express = require('express');
 const app = express();
 const cors = require('cors');
 const port = 3000;
 const encryption = require("./LogicHandlers/Encryption");
 const lobby = require('./LogicHandlers/Lobby');
-//const pokerTable = require('./LogicHandlers/PokerTable');
+const RuleManager = require("./Managers/RuleManager").RuleManager;
+const PokerTable = require('./LogicHandlers/PokerTable').PokerTable;
 const crypto = require("crypto"); //only for testing purposes
+//const User =require("./Models/User");
+const User = require("./Models/User").User;
 
 //List to carry the carddeck.
 let cardDeck = [];
@@ -106,9 +110,11 @@ app.get('/api/testCardDeck', (req, res) => {
 //test rulemanager
 app.get('/api/ruleManagerTest', (req, res) => {
 
-  let ruleManager = RuleManager.getInstance();
-  const PokerTable = require('./LogicHandlers/PokerTable');
-  const User = require('./Models/User');
+ const ruleManager = RuleManager.GetInstance();
+  //const PokerTable = require('./LogicHandlers/PokerTable');
+  //const User = require('./Models/User');
+
+
 
   let hand8 = ["2H", "2D", "2C", "kD", "kD", "10D", "3C"];//full house
   let hand7 = ["2D", "3D", "4D", "5D", "8D", "10H", "kC"];//flush
@@ -139,7 +145,7 @@ app.get('/api/ruleManagerTest', (req, res) => {
   //Creating a testPokerTable object
   //-----------------------------------------------
   // testPocketCards=[["1x card"], ["1 x pair"], ["2 x pair"], ["3 x kind "], ["straight"], ["straight"]]
-  testPocketCards = [["3D", "7H"], ["5S", "6S"], ["5D", "jS"], ["10D", "10S"], ["2S", "9S"], ["aD", "8D"]]; //With two straights high and low
+  let testPocketCards = [["3D", "7H"], ["5S", "6S"], ["5D", "jS"], ["10D", "10S"], ["2S", "9S"], ["aD", "8D"]]; //With two straights high and low
   // testPocketCards=[["1x card"], ["1 x pair"], ["2 x pair"], ["3 x kind "], ["straight"], ["flush   "], ["full hou"], ["4 x kind  "], ["str flu"],["royal flu"]]
   //testPocketCards = [["3D", "7H"], ["4S", "6S"], ["4H", "jS"], ["5H", "10S"], ["2S", "9S"], ["aD", "8C"], ["jS", "jD"], ["10S", "10D"], ["aS", "9C"], ["aC", "4C"]] //with royal straight flush
 
@@ -162,7 +168,7 @@ app.get('/api/ruleManagerTest', (req, res) => {
   }
   // pokerTable.collectiveCards=["10C", "jC", "qC", "kC", "8H"];
   pokerTable.collectiveCards = ["10C", "jC", "qC", "kC", "5H"];
-
+console.log("Pokertable: " + pokerTable);
   //-----------------------------------------------
   //-----------------------------------------------
 
