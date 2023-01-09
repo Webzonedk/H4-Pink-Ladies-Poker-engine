@@ -8,6 +8,9 @@ class PokerTable {
      cardDeck = [];
      dealer;
 
+     constructor(){
+        
+     }
 
      AddRoles = () => {
 
@@ -51,4 +54,3 @@ class PokerTable {
 
 };
 
-//module.exports = PokerTable;

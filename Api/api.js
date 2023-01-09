@@ -6,7 +6,6 @@ const encryption = require("./LogicHandlers/Encryption");
 const lobby = require('./LogicHandlers/Lobby');
 //const pokerTable = require('./LogicHandlers/PokerTable');
 const crypto = require("crypto"); //only for testing purposes
-const RuleManager = require('./Managers/RuleManager');
 
 //List to carry the carddeck.
 let cardDeck = [];
@@ -21,26 +20,33 @@ encryption.CreateAES();
 
 
 // only for testing puposes.
-const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", { modulusLength: 2048 });
+const {publicKey, privateKey} = crypto.generateKeyPairSync("rsa",{modulusLength: 2048});
 
 //Get AES keys
-app.get('/api/GetAES', (req, res) => {
+app.get('/api/GetAES',(req,res) => {
 
-  const key = req.body.publicKey;
-  console.log(publicKey);
-  const encryptedData = encryption.EncryptRSA(publicKey);
-
+    const key = req.body.publicKey;
+    console.log(publicKey);
+  const encryptedData =  encryption.EncryptRSA(publicKey);
+ 
   res.status(200).send(encryptedData);
 
 });
 
 //create new user
-app.post('/api/CreateUser', (req, res) => {
+app.post('/api/CreateUser', (req,res) => {
 
-  const encryptedUser = req.body.userName;
+  //test encrypted user
+  const userName = req.body.userName;
+const encrypted = encryption.EncryptAES(userName);
 
-  const decryptedUser = encryption.DecryptAES(encryptedUser);
+
+ 
+const decryptedUser = encryption.DecryptAES(encrypted);
+console.log(decryptedUser);
   lobby.CreateUser(decryptedUser);
+
+  console.log("poker tables: ",lobby.pokerTables);
 
   res.status(200).send("user created!");
 
