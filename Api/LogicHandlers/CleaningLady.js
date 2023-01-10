@@ -11,7 +11,7 @@ class privateCleaningLady {
 
     for (let index = 0; index < lobbySingleton.pokerTables.length; index++) {
       if (lobbySingleton.pokerTables[index].users.find(({ userID }) => userID === currentUserID)) {
-        let user = lobbySingleton.pokerTables[index].users.find(({ userID }) => userID === 1);
+        let user = lobbySingleton.pokerTables[index].users.find(({ userID }) => userID === currentUserID);
         lobbySingleton.pokerTables[index].users.splice(index, 1);
         
         //insert user into lobby

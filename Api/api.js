@@ -7,8 +7,8 @@ const encryption = require("./LogicHandlers/Encryption");
 const Lobby = require('./LogicHandlers/Lobby').Lobby;
 const RuleManager = require("./Managers/RuleManager").RuleManager;
 const PokerTable = require('./LogicHandlers/PokerTable').PokerTable;
+const Encryption = require('./LogicHandlers/Encryption').Encryption;
 const crypto = require("crypto"); //only for testing purposes
-//const User =require("./Models/User");
 const User = require("./Models/User").User;
 
 //List to carry the carddeck.
@@ -20,7 +20,7 @@ app.use(cors());
 
 
 //create AES keys when api is starting, before anything else, to ensure that AES key and IV exists.
-encryption.CreateAES();
+Encryption.GetInstance().CreateAES();
 
 
 // only for testing puposes.
@@ -42,11 +42,11 @@ app.post('/api/CreateUser', (req,res) => {
 
   //test encrypted user
   const userName = req.body.userName;
-const encrypted = encryption.EncryptAES(userName);
+const encrypted = Encryption.GetInstance().EncryptAES(userName);
 
 
  
-const decryptedUser = encryption.DecryptAES(encrypted);
+const decryptedUser = Encryption.GetInstance().DecryptAES(encrypted);
 
   const lobbySingleton = Lobby.GetInstance();
   lobbySingleton.CreateUser(decryptedUser);
@@ -85,11 +85,35 @@ app.post('/api/PlayAgain', (req, res) => {
 //leave poker table
 app.post('/api/LeaveTable', (req, res) => {
 
-  const encryptedUserID = req.body.userID;
+//test encrypted user
+const userID = req.body.userID;
+const encrypted = encryption.EncryptAES(userID);
+const decryptedUserID = encryption.DecryptAES(encrypted);
 
-  const decryptedUserID = encryption.DecryptAES(encryptedUserID);
-  pokerTable.LeavePokerTable(decryptedUserID);
 
+ 
+
+
+
+// const encryptedUserID = req.body.userID;
+ // const decryptedUserID = encryption.DecryptAES(encryptedUserID);
+
+//find pokertable with user that has userID N
+for (let i = 0; i < Lobby.GetInstance().pokerTables.length; i++) {
+  
+  let user = Lobby.GetInstance().pokerTables[i].users.find((userID) => userID ===userID );
+  if(user.userID == userID)
+  {
+    Lobby.GetInstance().pokerTables[i].LeavePokerTable(user.userID);
+   break;
+  }
+}
+
+
+//execute method to remove user from table
+
+ //pokerTableSingleton.LeavePokerTable(decryptedUserID);
+console.log("waiting users: ", Lobby.GetInstance().waitingUsers);
   res.status(200).send("replay!");
 
 });

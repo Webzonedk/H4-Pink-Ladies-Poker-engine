@@ -33,8 +33,7 @@ class PrivateLobby {
 
             //add user to first poker table with available seat
             for (let i = 0; i < this.pokerTables.length; i++) {
-                //  const pokerTable = this.pokerTables[i];
-               // console.log(this.pokerTables[i]);
+             
                 if (this.pokerTables[i].users.length < 9) {
 
 
@@ -52,7 +51,7 @@ class PrivateLobby {
 
         }
         else {
-            console.log("user: ", user);
+           // console.log("user: ", user);
             this.CreatePokerTable(user);
         }
 
@@ -60,6 +59,7 @@ class PrivateLobby {
 
     }
 
+    //create new pokertable
     CreatePokerTable = (user) => {
 
         //create user class
@@ -74,6 +74,8 @@ class PrivateLobby {
     }
 
 }
+
+//exported pbulic singleton class
 class Lobby {
 
 
