@@ -14,12 +14,12 @@ class PrivateLobby {
 
 
         let currentUser = new User();
-        currentUser.UserID = this.higestID + 1;
-        currentUser.Saldo = 10000;
-        currentUser.UserName = userName;
+        currentUser.userID = this.higestID + 1;
+        currentUser.saldo = 0;
+        currentUser.userName = userName;
 
         //set higest ID
-        this.higestID = currentUser.UserID;
+        this.higestID = currentUser.userID;
 
         //add user to poker table
         this.AddToPokerTable(currentUser);
@@ -33,13 +33,13 @@ class PrivateLobby {
 
             //add user to first poker table with available seat
             for (let i = 0; i < this.pokerTables.length; i++) {
-                const pokerTable = this.pokerTables[i];
-
-                if (pokerTable.users.length < 9) {
+                //  const pokerTable = this.pokerTables[i];
+               // console.log(this.pokerTables[i]);
+                if (this.pokerTables[i].users.length < 9) {
 
 
                     console.log("user: ", user);
-                    pokerTable.users.push(user);
+                    this.pokerTables[i].users.push(user);
                     return;
                 }
 
@@ -90,4 +90,4 @@ class Lobby {
 
 }
 
-module.exports = { Lobby };
+module.exports = { Lobby: Lobby };

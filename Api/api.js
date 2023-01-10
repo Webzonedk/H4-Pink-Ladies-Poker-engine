@@ -181,36 +181,40 @@ console.log("Pokertable: " + pokerTable);
 //test cleaning lady
 app.post('/api/cleaningLady', (req, res) => {
 
-  const housekeeping = require('./LogicHandlers/CleaningLady');
-  const PokerTable = require('./LogicHandlers/PokerTable');
-  const User = require('./Models/User');
-  let pokerTable = new PokerTable();
+  
+  const lobby = require('./LogicHandlers/Lobby').Lobby;
+  //const User = require('./Models/User');
+ // let pokerTable = new PokerTable();
+  let singleton = lobby.GetInstance();
+  // //create test users
+  // for (let index = 0; index < 5; index++) {
 
-  //create test users
-  for (let index = 0; index < 5; index++) {
+  //   let user = new User();
+  //   user.UserID = index;
+  //   user.UserName = "user_" + index + 1;
+  //   user.Saldo = 1000;
+  //   if (index === 4) {
+  //     user.Saldo = 0;
+  //   }
 
-    let user = new User();
-    user.UserID = index;
-    user.UserName = "user_" + index + 1;
-    user.Saldo = 1000;
-    if (index === 4) {
-      user.Saldo = 0;
-    }
+  //   //add test users to poker table
+  //   pokerTable.users.push(user);
 
-    //add test users to poker table
-    pokerTable.users.push(user);
-
-  }
+  // }
 
   //add poker table to lobby
-  Lobby.pokerTables.push(pokerTable);
+ // Lobby.pokerTables.push(pokerTable);
 
 
   //find user with user id of 4
-  let user = Lobby.pokerTables[0].users.find(({ UserID }) => UserID === 4);
-  console.log(user);
+  // let user = Lobby.pokerTables[0].users.find(({ UserID }) => UserID === 4);
+  // console.log(user);
   //move user with userID 4 to waitinguser
-  housekeeping.MoveUserToWaitingUsers(user.UserID);
+  for (let i = 0; i < singleton.pokerTables.length; i++) {
+    singleton.pokerTables[i].VerifyOrKickPlayer();
+  }
+  
+   res.status(200).send("users kicked!");
 
 });
 

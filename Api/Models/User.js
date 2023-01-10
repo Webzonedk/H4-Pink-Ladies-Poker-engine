@@ -1,11 +1,11 @@
 
   class User{
-    UserID;
-    UserName; 
-    Saldo;
-    PocketCards;
-    State;
-    Bet;
+    userID;
+    userName; 
+    saldo;
+    pocketCards;
+    state;
+    bet;
     constructor(){
       // this.UserID=null
       // this.UserName=""; 

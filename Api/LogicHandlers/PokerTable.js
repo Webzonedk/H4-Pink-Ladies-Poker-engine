@@ -1,5 +1,7 @@
-//const CleaningLady = require('./CleaningLady');
+const CleaningLady = require('../LogicHandlers/CleaningLady').CleaningLady;
+const User = require("../Models/User").User;
 class PokerTable {
+
 
 
      users = [];
@@ -7,6 +9,13 @@ class PokerTable {
      collectiveCards = [];
      cardDeck = [];
      dealer;
+     smallBlind;
+     bigBlind;
+     currentBet;
+     totalBet;
+     totalPot;
+     currentUser;
+     round;
 
      constructor(){
         
@@ -31,20 +40,29 @@ class PokerTable {
 
      SetCurrentUser = () => {
 
-
+        this.currentUser++;
+        if(this.currentUser >= this.users.length)
+        {
+            this.currentUser = 0;
+        }
     }
 
      VerifyOrKickPlayer = () => {
 
-        for (let index = 0; index < users.length; index++) {
+        let Ladysingleton = CleaningLady.GetInstance();
+
+        for (let index = 0; index < this.users.length; index++) {
 
             //kick player
-            if (users[index].Saldo === 0) {
+            if (this.users[index].saldo === 0) {
 
-              //  CleaningLady.MoveUserToWaitingUsers(users[index].userID);
+                Ladysingleton.MoveUserToWaitingUsers(this.users[index].userID);
+                
             }
 
         }
+
+        
     }
 
      LeavePokerTable = (userID) => {
