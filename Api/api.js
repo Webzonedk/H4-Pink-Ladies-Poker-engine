@@ -4,7 +4,7 @@ const app = express();
 const cors = require('cors');
 const port = 3000;
 const encryption = require("./LogicHandlers/Encryption");
-const lobby = require('./LogicHandlers/Lobby');
+const Lobby = require('./LogicHandlers/Lobby').Lobby;
 const RuleManager = require("./Managers/RuleManager").RuleManager;
 const PokerTable = require('./LogicHandlers/PokerTable').PokerTable;
 const crypto = require("crypto"); //only for testing purposes
@@ -47,10 +47,11 @@ const encrypted = encryption.EncryptAES(userName);
 
  
 const decryptedUser = encryption.DecryptAES(encrypted);
-console.log(decryptedUser);
-  lobby.CreateUser(decryptedUser);
 
-  console.log("poker tables: ",lobby.pokerTables);
+  const lobbySingleton = Lobby.GetInstance();
+  lobbySingleton.CreateUser(decryptedUser);
+
+  console.log("poker tables: ",lobbySingleton.pokerTables);
 
   res.status(200).send("user created!");
 
@@ -202,11 +203,11 @@ app.post('/api/cleaningLady', (req, res) => {
   }
 
   //add poker table to lobby
-  lobby.pokerTables.push(pokerTable);
+  Lobby.pokerTables.push(pokerTable);
 
 
   //find user with user id of 4
-  let user = lobby.pokerTables[0].users.find(({ UserID }) => UserID === 4);
+  let user = Lobby.pokerTables[0].users.find(({ UserID }) => UserID === 4);
   console.log(user);
   //move user with userID 4 to waitinguser
   housekeeping.MoveUserToWaitingUsers(user.UserID);
