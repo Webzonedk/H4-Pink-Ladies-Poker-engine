@@ -1,5 +1,12 @@
 class PrivateRuleManager {
- 
+
+  FACES = [];
+  SUITS = [];
+  highestHands = [];
+  highest = 0;
+  lowest = 0;
+  kicker = 0;
+
   constructor() {
     this.FACES = [
       "2",
@@ -18,7 +25,6 @@ class PrivateRuleManager {
     ];
     this.SUITS = ["H", "D", "C", "S"];
   }
-  
 
   CompareHands = (pokerTable) => {
     //temporary array of cards from
@@ -36,7 +42,7 @@ class PrivateRuleManager {
       //console.log("userTempcards: ", userTempcards);
       let userData = {
         tempHands: userTempcards,
-        cardResult: { handName: "", handValue: 0, shift: 0 },
+        cardResult: { handName: "", handValue: 0, shift: 0, high: 0, low: 0, kick: 0 },
       };
       playerHands.push(userData);
 
@@ -51,85 +57,106 @@ class PrivateRuleManager {
       // console.log("cardresult: ", playerHands[i].cardResult);
     }
 
-    //step one, go through all players and return an array containing the users with the highest hand value 0-10
-    let highestHands = [];
 
-    highestHands.push(playerHands[0]);
+    //----------------------------------------------------
+    //step one, go through all players and return an array containing the users with the highest hand value 0-10
+    //----------------------------------------------------
+
+
+    this.highestHands.push(playerHands[0]);
 
     for (let i = 0; i < playerHands.length; i++) {
-      for (let j = 0; j < highestHands.length; j++) {
+      for (let j = 0; j < this.highestHands.length; j++) {
         if (
           i == 0 &&
           playerHands[i].cardResult.handValue ==
-          highestHands[j].cardResult.handValue
+          this.highestHands[j].cardResult.handValue
         ) {
           // console.log("replacing first straight");
-          highestHands = [];
-          highestHands.push(playerHands[i]);
+          this.highestHands = [];
+          this.highestHands.push(playerHands[i]);
 
-          //console.log(highestHands.length);
+          //console.log(this.highestHands.length);
         } else if (
           i != 0 &&
           playerHands[i].cardResult.handValue ==
-          highestHands[j].cardResult.handValue
+          this.highestHands[j].cardResult.handValue
         ) {
-          if (playerHands[i].tempHands != highestHands[j].tempHands) {
+          if (playerHands[i].tempHands != this.highestHands[j].tempHands) {
             //  console.log("adding straight");
-            highestHands.push(playerHands[i]);
+            this.highestHands.push(playerHands[i]);
           }
           j++;
-          //console.log(highestHands.length);
+          //console.log(this.highestHands.length);
         } else if (
           playerHands[i].cardResult.handValue >
-          highestHands[j].cardResult.handValue
+          this.highestHands[j].cardResult.handValue
         ) {
           //  console.log("this is larger: ", playerHands[i].cardResult.handValue);
           //  console.log("replacing");
-          highestHands = [];
-          highestHands.push(playerHands[i]);
+          this.highestHands = [];
+          this.highestHands.push(playerHands[i]);
 
-          // console.log(highestHands.length);
+          // console.log(this.highestHands.length);
         }
       }
     }
 
-    // console.log("highest hands", highestHands);
-    // console.log(" temphands: ", highestHands.length);
+    // console.log("highest hands", this.highestHands);
+    // console.log(" temphands: ", this.highestHands.length);
     console.log("PlayerHands: ", playerHands);
     console.log("-------------------------------------------------------------");
-    console.log("Highest hand: ", highestHands);
+    console.log("Highest hand: ", this.highestHands);
+
+    //console.log("highLowCounter: " + this.CountShifted(this.playerHands));
+
+    this.FindHighestHand();
   };
 
+
+  //----------------------------------------------------
   //step two, iterate new array and check if more than one user has same value card.
+  //----------------------------------------------------
+  FindHighestHand = () => {
+    for (let i = 0; i < this.highestHands.length; i++) {
 
+
+    }
+
+  }
+
+
+
+  //----------------------------------------------------
   // step 3 use shift to sort which user has the best cards.
+  //----------------------------------------------------
 
+  //----------------------------------------------------
   //step 4 return the users with the highest card value and highest shift.
+  //----------------------------------------------------
 
   AnalyzeHand = (hand) => {
     console.log("Analyzing ------------------------------- Analyzing");
     let faces = hand.map((card) => this.FACES.indexOf(card.slice(0, -1)));
     let suits = hand.map((card) => this.SUITS.indexOf(card.slice(-1)));
 
-    //calcaulating flush by comparing if all index is same value
-    // let flush = suits.every((suit) => suit === suits[0]);
+  //-------------------------------------------------
+  //Method to check if first card is an ace
+  //-------------------------------------------------
+  function AceSplitter(suits) {
+    console.log("suits: " + suits);
+    let ace = hand[0];
+    let splittedAce = ace.split("");
+    let indexNumber = suits.findIndex((element) => element == splittedAce[1]);
+    console.log("splitted index: ", indexNumber);
+    console.log("splitted value: ", splittedAce[1]);
+    return indexNumber;
+  };
+  //-------------------------------------------------
+  //-------------------------------------------------
 
-    //-------------------------------------------------
-    //check if first card is an ace
-    //-------------------------------------------------
-   
-     function AceSplitter(suits) {
-      console.log("suits: "+suits);
-      let ace = hand[0];
-      let splittedAce = ace.split("");
-      let indexNumber = suits.findIndex((element) => element == splittedAce[1]);
-      console.log("splitted index: ", indexNumber);
-      console.log("splitted value: ", splittedAce[1]);
-      return indexNumber;
-    };
 
-    //-------------------------------------------------
-    //-------------------------------------------------
+
 
     //------------------------------------------------
     //Flush Calculator
@@ -339,30 +366,62 @@ class PrivateRuleManager {
     //analysing hand, returns string with hand title
     let result =
       straight && flush && highestStraight && sameAceTypeAsFlush
-        ? { handName: "Royal-straight-flush", handValue: 10, shift: shifted }
+        ? { handName: "Royal-straight-flush", handValue: 10, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker }
         : straight && flush && !sameAceTypeAsFlush && !isFlushOnly
-          ? { handName: "straight-flush", handValue: 9, shift: shifted }
+          ? { handName: "straight-flush", handValue: 9, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker }
           : groups[0] === 4
-            ? { handName: "four-of-a-kind", handValue: 8, shift: shifted }
+            ? { handName: "four-of-a-kind", handValue: 8, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker }
             : groups[0] === 3 && groups[1] === 2
-              ? { handName: "full-house", handValue: 7, shift: shifted }
+              ? { handName: "full-house", handValue: 7, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker }
               : flush && isFlushOnly
-                ? { handName: "flush", handValue: 6, shift: shifted }
+                ? { handName: "flush", handValue: 6, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker }
                 : straight || highestStraight
-                  ? { handName: "straight", handValue: 5, shift: shifted }
+                  ? { handName: "straight", handValue: 5, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker }
                   : groups[0] === 3
-                    ? { handName: "three-of-a-kind", handValue: 4, shift: shifted }
+                    ? { handName: "three-of-a-kind", handValue: 4, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker }
                     : groups[0] === 2 && groups[1] === 2
-                      ? { handName: "two-pair", handValue: 3, shift: shifted }
+                      ? { handName: "two-pair", handValue: 3, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker }
                       : groups[0] === 2
-                        ? { handName: "one-pair", handValue: 2, shift: shifted }
-                        : { handName: "high-card", handValue: 1, shift: shifted };
+                        ? { handName: "one-pair", handValue: 2, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker }
+                        : { handName: "high-card", handValue: 1, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker };
 
     // console.log(result);
     return result;
 
-
   };
+  // //Counting groups in shifted to count instance of each 
+  // CountShifted = () => {
+  //   let count = { key: 0, value: 0 };
+  //   for (const index of shifted) {
+  //     count[index] = count[index] ? count[index] + 1 : 1;
+  //   }
+  //   return count;
+  // }
+
+
+  AddHighLowKick = (playerHand) => {
+    if (shifted[0] == 0) {
+      this.kicker = 0;
+    }
+    if (groups[0] == 2 && groups[1] < 2) {
+      for (let i = 0; i < this.CountShifted.length; i++) {
+        if (this.CountShifted[i] == 2) {
+          highest =0;
+       }
+
+      }
+      highest == 0;
+    }
+    if (groups[0] == 2 && groups[1] == 2) {
+
+    }
+  }
+
+
+
+
+
+
 }
 class RuleManager {
 
@@ -384,6 +443,6 @@ class RuleManager {
 
 // for(hand of testHands) console.log(hand + ": " + analyzeHand(hand));
 
-module.exports = {RuleManager};
+module.exports = { RuleManager };
 
 
