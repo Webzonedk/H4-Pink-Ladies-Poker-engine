@@ -41,17 +41,17 @@ class PrivateRuleManager {
       userTempcards.push(...pokerTable.collectiveCards);
       //console.log("userTempcards: ", userTempcards);
       let userData = {
-        tempHands: userTempcards,
+        tempHand: userTempcards,
         cardResult: { handName: "", handValue: 0, shift: 0, high: 0, low: 0, kick: 0 },
       };
       playerHands.push(userData);
 
-      // console.log("user hands: ", userData.tempHands); //DEBUG
+      // console.log("user hands: ", userData.tempHand); //DEBUG
     }
 
     for (let i = 0; i < playerHands.length; i++) {
-      // console.log("temp hands: ", playerHands[i].tempHands);
-      let result = this.AnalyzeHand(playerHands[i].tempHands);
+      // console.log("temp hands: ", playerHands[i].tempHand);
+      let result = this.AnalyzeHand(playerHands[i].tempHand);
       playerHands[i].cardResult = result;
 
       // console.log("cardresult: ", playerHands[i].cardResult);
@@ -82,7 +82,7 @@ class PrivateRuleManager {
           playerHands[i].cardResult.handValue ==
           this.highestHands[j].cardResult.handValue
         ) {
-          if (playerHands[i].tempHands != this.highestHands[j].tempHands) {
+          if (playerHands[i].tempHand != this.highestHands[j].tempHand) {
             //  console.log("adding straight");
             this.highestHands.push(playerHands[i]);
           }
@@ -103,7 +103,7 @@ class PrivateRuleManager {
     }
 
     // console.log("highest hands", this.highestHands);
-    // console.log(" temphands: ", this.highestHands.length);
+    // console.log(" temphand: ", this.highestHands.length);
     console.log("PlayerHands: ", playerHands);
     console.log("-------------------------------------------------------------");
     console.log("Highest hand: ", this.highestHands);
@@ -119,8 +119,23 @@ class PrivateRuleManager {
   //----------------------------------------------------
   FindHighestHand = () => {
     for (let i = 0; i < this.highestHands.length; i++) {
+      let shiftCount = this.CountShifted(this.highestHands[i].cardResult.shift);
+      console.log("shiftCount: ", shiftCount); //DEBUG
+      for (let j = 0; j < shiftCount[0].length; j++) {
+        for (let k = 0; k < 13; k++) {
+          if (shiftCount[0][j] == k) {
 
+          }
 
+        }
+        if (shiftCount[0] == 0) {
+          const element = array[j];
+        }
+        else {
+
+        }
+
+      }
     }
 
   }
@@ -140,20 +155,20 @@ class PrivateRuleManager {
     let faces = hand.map((card) => this.FACES.indexOf(card.slice(0, -1)));
     let suits = hand.map((card) => this.SUITS.indexOf(card.slice(-1)));
 
-  //-------------------------------------------------
-  //Method to check if first card is an ace
-  //-------------------------------------------------
-  function AceSplitter(suits) {
-    console.log("suits: " + suits);
-    let ace = hand[0];
-    let splittedAce = ace.split("");
-    let indexNumber = suits.findIndex((element) => element == splittedAce[1]);
-    console.log("splitted index: ", indexNumber);
-    console.log("splitted value: ", splittedAce[1]);
-    return indexNumber;
-  };
-  //-------------------------------------------------
-  //-------------------------------------------------
+    //-------------------------------------------------
+    //Method to check if first card is an ace
+    //-------------------------------------------------
+    function AceSplitter(suits) {
+      console.log("suits: " + suits);
+      let ace = hand[0];
+      let splittedAce = ace.split("");
+      let indexNumber = suits.findIndex((element) => element == splittedAce[1]);
+      console.log("splitted index: ", indexNumber);
+      console.log("splitted value: ", splittedAce[1]);
+      return indexNumber;
+    };
+    //-------------------------------------------------
+    //-------------------------------------------------
 
 
 
@@ -390,13 +405,26 @@ class PrivateRuleManager {
 
   };
   // //Counting groups in shifted to count instance of each 
-  // CountShifted = () => {
-  //   let count = { key: 0, value: 0 };
-  //   for (const index of shifted) {
-  //     count[index] = count[index] ? count[index] + 1 : 1;
-  //   }
-  //   return count;
-  // }
+  CountShifted = (shifted) => {
+    // let count = { key: 0, value: 0 };
+    let shifts = [];
+    let counts = [];
+    let previousIndex;
+    for (let index of shifted) {
+      if (index !== previousIndex) {
+        shifts.push(index);
+        counts.push(1);
+      }
+      else {
+        ++counts[counts.length - 1];
+        previousIndex = index;
+      }
+    }
+    //console.log("CountShiftedShifted: " , shifted); //DEBUG
+    // console.log("CountShifted: " , shifts, counts); //DEBUG
+
+    return [shifts, counts];
+  }
 
 
   AddHighLowKick = (playerHand) => {
@@ -406,8 +434,8 @@ class PrivateRuleManager {
     if (groups[0] == 2 && groups[1] < 2) {
       for (let i = 0; i < this.CountShifted.length; i++) {
         if (this.CountShifted[i] == 2) {
-          highest =0;
-       }
+          highest = 0;
+        }
 
       }
       highest == 0;
