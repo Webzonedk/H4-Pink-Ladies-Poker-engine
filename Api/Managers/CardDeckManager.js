@@ -1,6 +1,11 @@
 class PrivateCardDeckManager {
+  cardValues = [];
+  cardSuits = [];
+  cardDeck = [];
+  mixedCardDeck = [];
+
   constructor() {
-    const cardValues = [
+    this.cardValues = [
       "2",
       "3",
       "4",
@@ -16,10 +21,8 @@ class PrivateCardDeckManager {
       "a",
     ];
     //Hearts, Diamonds, Clubs, Spades
-    const cardSuits = ["H", "D", "C", "S"];
+    this.cardSuits = ["H", "D", "C", "S"];
 
-    let cardDeck = [];
-    let mixedCardDeck = [];
   };
   NewCardDeck = () => {
     for (let i = 0; i < this.cardSuits.length; i++) {
@@ -33,12 +36,12 @@ class PrivateCardDeckManager {
     for (let i = 0; i < 52; i++) {
       let selectedCard = getRandomCardFromCardDeck(this.cardDeck.length);
       this.mixedCardDeck.push(this.cardDeck[selectedCard]);
-      cardDeck.splice(selectedCard, 1);
-      console.log(selectedCard);
-      console.log("cardDeck: " + cardDeck);
+      this.cardDeck.splice(selectedCard, 1);
+      //console.log(selectedCard);
+      //console.log("cardDeck: " + this.cardDeck);
     }
-    console.log("carddeck length: ", this.cardDeck.length);
-    console.log("mixedCardDeck: " + this.mixedCardDeck);
+   // console.log("carddeck length: ", this.cardDeck.length);
+   // console.log("mixedCardDeck: " + this.mixedCardDeck);
 
     // local function to get random number within cardDeck length
     function getRandomCardFromCardDeck(max) {
@@ -66,6 +69,5 @@ class CardDeckManager {
 
 };
 
-module.exports = CardDeckManager;
+module.exports = { CardDeckManager: CardDeckManager };
 
- 
