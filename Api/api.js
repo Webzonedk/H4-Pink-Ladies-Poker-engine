@@ -169,8 +169,10 @@ app.get('/api/ruleManagerTest', (req, res) => {
   //-----------------------------------------------
   //Creating a testPokerTable object
   //-----------------------------------------------
-  // testPocketCards=[["1x card"], ["1 x pair"], ["2 x pair"], ["3 x kind "], ["straight"], ["straight"]]
-  let testPocketCards = [["3D", "7H"], ["5S", "6S"], ["5D", "jS"], ["10D", "10S"], ["2S", "9S"], ["aD", "8D"]]; //With two straights high and low
+  let testPocketCards = [["3D", "7H"],["3D", "8H"]]; //high card
+  //let testPocketCards = [["3D", "7H"], ["5S", "6S"]]; //one pair
+  //let testPocketCards = [["3D", "7H"], ["5D", "6S"], ["5S", "jS"]]; //one pair * 2
+  //let testPocketCards = [["3D", "7H"], ["5S", "6S"], ["5D", "jS"], ["10D", "10S"], ["2S", "9S"], ["aD", "8D"]]; //With two straights high and low
   // testPocketCards=[["1x card"], ["1 x pair"], ["2 x pair"], ["3 x kind "], ["straight"], ["flush   "], ["full hou"], ["4 x kind  "], ["str flu"],["royal flu"]]
   //testPocketCards = [["3D", "7H"], ["4S", "6S"], ["4H", "jS"], ["5H", "10S"], ["2S", "9S"], ["aD", "8C"], ["jS", "jD"], ["10S", "10D"], ["aS", "9C"], ["aC", "4C"]] //with royal straight flush
 
@@ -178,7 +180,7 @@ app.get('/api/ruleManagerTest', (req, res) => {
   let pokerTable = new PokerTable();
 
   //create test users
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 2; i++) {
 
     let user = new User();
     user.UserID = i;
