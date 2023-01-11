@@ -51,7 +51,7 @@ const decryptedUser = Encryption.GetInstance().DecryptAES(encrypted);
   const lobbySingleton = Lobby.GetInstance();
   lobbySingleton.CreateUser(decryptedUser);
 
-  console.log("poker tables: ",lobbySingleton.pokerTables);
+  console.log("users: ",lobbySingleton.pokerTables[0].users.length);
 
   res.status(200).send("user created!");
 
@@ -62,9 +62,13 @@ const decryptedUser = Encryption.GetInstance().DecryptAES(encrypted);
 app.post('/api/Useraction', (req, res) => {
 
   const encryptedUserAction = req.body.userAction;
+  //test encryption
+  const encrypted = Encryption.GetInstance().EncryptAES(encryptedUserAction);
 
-  const decryptedUserAction = encryption.DecryptAES(encryptedUserAction);
-  pokerTable.UpdateUserState(decryptedUserAction.action, decryptedUserAction.value);
+
+  const decryptedUserAction = Encryption.GetInstance().DecryptAES(encryptedUserAction);
+  Lobby.GetInstance().pokerTables[decryptedUserAction.tableID].UpdateUserState(decryptedUserAction.action, decryptedUserAction.value);
+ 
 
   res.status(200).send("user interacting");
 
@@ -86,28 +90,27 @@ app.post('/api/PlayAgain', (req, res) => {
 app.post('/api/LeaveTable', (req, res) => {
 
 //test encrypted user
-const userID = req.body.userID;
-const encrypted = encryption.EncryptAES(userID);
-const decryptedUserID = encryption.DecryptAES(encrypted);
+const user = req.body;
+//console.log(user);
+const encrypted = Encryption.GetInstance().EncryptAES(user);
+const decryptedUserID = Encryption.GetInstance().DecryptAES(encrypted);
 
 
  
-
 
 
 // const encryptedUserID = req.body.userID;
  // const decryptedUserID = encryption.DecryptAES(encryptedUserID);
 
 //find pokertable with user that has userID N
-for (let i = 0; i < Lobby.GetInstance().pokerTables.length; i++) {
+
   
-  let user = Lobby.GetInstance().pokerTables[i].users.find((userID) => userID ===userID );
-  if(user.userID == userID)
-  {
-    Lobby.GetInstance().pokerTables[i].LeavePokerTable(user.userID);
-   break;
-  }
-}
+ // let user = Lobby.GetInstance().pokerTables[i].users.find((userID) => userID ===userID );
+  
+    Lobby.GetInstance().pokerTables[user.tableID].LeavePokerTable(user.userID);
+  
+  
+
 
 
 //execute method to remove user from table
