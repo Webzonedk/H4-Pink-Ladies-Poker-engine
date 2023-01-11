@@ -44,7 +44,7 @@ class PrivateRuleManager {
       //console.log("userTempcards: ", userTempcards);
       let userData = {
         tempHand: userTempcards,
-        cardResult: { handName: "", handValue: 0, shift: 0, high: 0, low: 0, kick: 0, shiftCount: 0 },
+        cardResult: { handName: "", handValue: 0, shift: [], high: 0, low: 0, kick: 0, shifts: [], counts: [] },
       };
       playerHands.push(userData);
 
@@ -69,19 +69,14 @@ class PrivateRuleManager {
     for (let i = 0; i < playerHands.length; i++) {
       for (let j = 0; j < this.highestHands.length; j++) {
         if (
-          i == 0 &&
-          playerHands[i].cardResult.handValue ==
-          this.highestHands[j].cardResult.handValue
+          i == 0 && playerHands[i].cardResult.handValue == this.highestHands[j].cardResult.handValue
         ) {
           // console.log("replacing first higestHand");
           this.highestHands = [];
           this.highestHands.push(playerHands[i]);
 
           //console.log(this.highestHands.length);
-        } else if (
-          i != 0 &&
-          playerHands[i].cardResult.handValue ==
-          this.highestHands[j].cardResult.handValue
+        } else if (i != 0 && playerHands[i].cardResult.handValue == this.highestHands[j].cardResult.handValue
         ) {
           if (playerHands[i].tempHand != this.highestHands[j].tempHand) {
             //  console.log("adding adding highest hand with same value");
@@ -90,8 +85,7 @@ class PrivateRuleManager {
           j++;
           //console.log(this.highestHands.length);
         } else if (
-          playerHands[i].cardResult.handValue >
-          this.highestHands[j].cardResult.handValue
+          playerHands[i].cardResult.handValue > this.highestHands[j].cardResult.handValue
         ) {
           //  console.log("this is larger: ", playerHands[i].cardResult.handValue);
           //  console.log("replacing");
@@ -105,9 +99,11 @@ class PrivateRuleManager {
 
     // console.log("highest hands", this.highestHands);
     // console.log(" temphand: ", this.highestHands.length);
-    console.log("PlayerHands: ", playerHands);
-    console.log("-------------------------------------------------------------");
+
+
+    //console.log("PlayerHands: ", playerHands);
     console.log("Highest hand: ", this.highestHands);
+    console.log("-------------------------------------------------------------");
 
     //console.log("highLowCounter: " + this.CountShifted(this.playerHands));
 
@@ -126,13 +122,20 @@ class PrivateRuleManager {
       let shiftCount = this.CountShifted(highestHands[i].cardResult.shift);
       highestHands[i].shifts = shiftCount[0]
       highestHands[i].counts = shiftCount[1]
-      // console.log("shiftCount: ", shiftCount); //DEBUG
-      // console.log("highestHands with counted shifted: ", highestHands); //DEBUG
-      console.log("Highest hands lengt: ",highestHands.length);
+
+      // console.log("shift in FindHighestHand: ", shiftCount[0]); //DEBUG
+      // console.log("Counts in FindHighestHand: ", shiftCount[1]); //DEBUG
+      // console.log("highestHands shifts in FindHighestHand: ", highestHands[i].shifts); //DEBUG
+      // console.log("highestHands counts in FindHighestHand: ", highestHands[i].counts); //DEBUG
+      // console.log("highestHands shifts in FindHighestHand 0: ", highestHands[i].shifts[0]); //DEBUG
+      // console.log("highestHands counts in FindHighestHand 0: ", highestHands[i].counts[0]); //DEBUG
+
 
 
       switch (highestHands[i].cardResult.handValue) {
-        case 1: //Highest hand
+
+        case 1: //Highest card
+          // console.log("switch 1 hit: ", highestHands[i].cardResult.shift[0]);
           if (i == 0) {
             winnerHands.push(highestHands[i]);
           }
@@ -140,19 +143,33 @@ class PrivateRuleManager {
             winnerHands.push(highestHands[i]);
           }
           else {
-            for (let i = 0; i < winnerHands.length; i++) {
-              // if (winnerHands[i].) {
-              //   const element = array[i];
-              console.log("winnerHands", winnerHands[i]);
+            for (let i = 0; i < highestHands.length - 1; i++) {
+
+              for (let j = 0; j < winnerHands.length; j++) {
+                for (let k = 0; k < winnerHands[j].shifts.length; k++) {
+                  if (winnerHands[j].shifts[winnerHands[i].shifts.length - (k + 1)] < highestHands[i+1].shifts[winnerHands[i].shifts.length - (k + 1)]) {
+                    winnerHands = [];
+                    winnerHands.push(highestHands[i+1]);
+                    console.log("winnerHands was smaller: ");
+                  }
+                  console.log("winnerHands shifts.length-j+1: ", winnerHands[j].shifts[winnerHands[i].shifts.length - (k + 1)]);
+                  console.log("highestHands shifts.length-j+1: ", highestHands[i+1].shifts[winnerHands[i].shifts.length - (k + 1)]);
+                }
+
+              }
+             // console.log("winnerHands length: ", winnerHands.length);
             }
+
           }
 
           break;
+
         case 2: //one pair
           // if (shiftCount[0] == 0) {
           //   winnerHands.push(shiftCount[0])
           // }
           break;
+
         case 3: //two-pair
 
           break;
@@ -175,10 +192,9 @@ class PrivateRuleManager {
 
           break;
         default://Royal stright flush
-          // winnerHands.push(highestHands[i]);
+          winnerHands.push(highestHands[i]);
           break;
       }
-      console.log("all winnerHJands: ", winnerHands);
 
       //not in use
       // for (let j = 0; j < shiftCount[0].length; j++) {
@@ -189,6 +205,8 @@ class PrivateRuleManager {
       // }
 
     }
+    console.log("all winnerHands: ", winnerHands);
+    // console.log("winnerHands shifts: ", winnerHands[0].shifts);
   }
 
 
@@ -206,12 +224,12 @@ class PrivateRuleManager {
     //Method to check if first card is an ace
     //-------------------------------------------------
     function AceSplitter(suits) {
-      console.log("suits: " + suits);
+      // console.log("suits: " + suits);
       let ace = hand[0];
       let splittedAce = ace.split("");
       let indexNumber = suits.findIndex((element) => element == splittedAce[1]);
-      console.log("splitted index: ", indexNumber);
-      console.log("splitted value: ", splittedAce[1]);
+      // console.log("splitted index: ", indexNumber);
+      // console.log("splitted value: ", splittedAce[1]);
       return indexNumber;
     };
     //-------------------------------------------------
@@ -234,13 +252,13 @@ class PrivateRuleManager {
       ]);
       for (let i = 0; i < suitCounts.length; i++) {
         if (suitCounts[i][1] >= 5) {
-          console.log("we got a flush!");
+          //console.log("we got a flush!");
           suitType = suitCounts[i][0];
 
           //console.log("suiteType: ", suitType);
 
           //console.log("SuitCountInFlushCalculator: ",suitCounts[i][0]);
-          console.log("suitcounts: ", suitCounts);
+          // console.log("suitcounts: ", suitCounts);
           return true;
         }
       }
@@ -283,13 +301,12 @@ class PrivateRuleManager {
       if (nextValue > currentValue + 1) {
         counter = 0;
 
-        console.log("Resetting counter ", currentValue);
+        //console.log("Resetting counter ", currentValue); //DEBUG
       }
-      // let previousValue = shifted[i-1];
       if (nextValue == currentValue + 1) {
         counter++;
 
-        console.log("Counting! ", currentValue);
+        //console.log("Counting! ", currentValue);
       }
     }
 
@@ -297,7 +314,7 @@ class PrivateRuleManager {
     if (shifted[6] == 12 && shifted[0] == 0 && counter >= 4) {
       highestStraight = true;
       //then straight
-      console.log("highest Straight!");
+      //console.log("highest Straight!");
       //console.log("counter: ", counter);
     }
 
@@ -310,17 +327,14 @@ class PrivateRuleManager {
     let aceSuiteType;
     if (highestStraight) {
       aceSuiteType = AceSplitter(this.SUITS);
-      console.log("Acesuit type: ", aceSuiteType);
-      console.log("suit type: ", suitType);
-      console.log("original suits: ", this.SUITS);
+      // console.log("Acesuit type: ", aceSuiteType);
+      // console.log("suit type: ", suitType);
+      // console.log("original suits: ", this.SUITS);
       aceSuiteTypeLetter = this.SUITS[aceSuiteType];
-      console.log(
-        "-------------------------------This is the type of the ace",
-        aceSuiteTypeLetter
-      );
+      // console.log("-------------------------------This is the type of the ace", aceSuiteTypeLetter);
       if (this.SUITS[suitType] == aceSuiteTypeLetter) {
         sameAceTypeAsFlush = true;
-        console.log("ace type is same as flush: ", sameAceTypeAsFlush);
+        // console.log("ace type is same as flush: ", sameAceTypeAsFlush);
       }
     }
 
@@ -397,8 +411,13 @@ class PrivateRuleManager {
     //-------------------------------------------------
     //-------------------------------------------------
 
-    // finally, if index 0 has value 1 and  the distance is less than 5 straight is true.
-    console.log("groups: ", groups);
+
+    //-------------------------------------------------
+    //Logging
+    //-------------------------------------------------
+
+
+    //console.log("groups: ", groups);
 
     console.log(
       "is it straight: ",
@@ -412,17 +431,18 @@ class PrivateRuleManager {
       ", isFlushOnly: " +
       isFlushOnly
     );
-    // console.log("groups: ", groups);
 
-    console.log("shifted[0]: ", shifted[0]);
-    console.log("shifted[1]: ", shifted[1]);
-    console.log("shifted[2]: ", shifted[2]);
-    console.log("shifted[3]: ", shifted[3]);
-    console.log("shifted[4]: ", shifted[4]);
-    console.log("shifted[5]: ", shifted[5]);
-    console.log("shifted[6]: ", shifted[6]);
+    // console.log("shifted[0]: ", shifted[0]);
+    // console.log("shifted[1]: ", shifted[1]);
+    // console.log("shifted[2]: ", shifted[2]);
+    // console.log("shifted[3]: ", shifted[3]);
+    // console.log("shifted[4]: ", shifted[4]);
+    // console.log("shifted[5]: ", shifted[5]);
+    // console.log("shifted[6]: ", shifted[6]);
     console.log(
       "-----------------------------------------------------------------------------------"
+      //-------------------------------------------------
+      //-------------------------------------------------
     );
 
     //analysing hand, returns string with hand title
@@ -447,7 +467,7 @@ class PrivateRuleManager {
                         ? { handName: "one-pair", handValue: 2, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts }
                         : { handName: "high-card", handValue: 1, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts };
 
-    // console.log(result);
+    // console.log("result: ",result);
     return result;
 
   };
@@ -467,13 +487,16 @@ class PrivateRuleManager {
         previousIndex = index;
       }
     }
-    //console.log("CountShiftedShifted: " , shifted); //DEBUG
-    // console.log("CountShifted: " , shifts, counts); //DEBUG
+    // console.log("CountShifted Shifts: " , shifted); //DEBUG
+    //  console.log("CountShifted-counts: " , this.shifts, this.counts); //DEBUG
 
-    return [this.shifts, this.counts];
+    return [this.shifts, this.counts];//Fields
   }
 
 
+
+  //---------------------------------------------------------
+  //Notimplemented yet
   AddHighLowKick = (playerHand) => {
     if (shifted[0] == 0) {
       this.kicker = 0;
@@ -491,6 +514,7 @@ class PrivateRuleManager {
 
     }
   }
+  //---------------------------------------------------------
 
 
 
