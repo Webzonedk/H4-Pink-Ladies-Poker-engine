@@ -61,7 +61,7 @@ class PrivateRuleManager {
     //----------------------------------------------------
     //step one, go through all players and return an array containing the users with the highest hand value 0-10
     //----------------------------------------------------
-
+//Need to look into this. There might be an error in the logic
 
     this.highestHands.push(playerHands[0]);
 
@@ -110,26 +110,34 @@ class PrivateRuleManager {
 
     //console.log("highLowCounter: " + this.CountShifted(this.playerHands));
 
-    this.FindHighestHand();
+    this.FindHighestHand(this.highestHands);
   };
 
 
   //----------------------------------------------------
   //step two, iterate new array and check if more than one user has same value card.
   //----------------------------------------------------
-  FindHighestHand = () => {
-    for (let i = 0; i < this.highestHands.length; i++) {
-      let shiftCount = this.CountShifted(this.highestHands[i].cardResult.shift);
+  FindHighestHand = (highestHands) => {
+    let winnerHands=[];
+    let _highestHands = highestHands;
+    for (let i = 0; i < _highestHands.length; i++) {
+      let shiftCount = this.CountShifted(_highestHands[i].cardResult.shift);
       console.log("shiftCount: ", shiftCount); //DEBUG
+      if (_highestHands[i].cardResult.handValue==1) {
+        if (shiftCount[0] == 0) {
+          winnerHands.push(_highestHands[i])
+        }
+        // _highestHands.cardResult.shift.sort(function (a, b) {
+        //   return a - b;
+        // });
+
+      }
       for (let j = 0; j < shiftCount[0].length; j++) {
         for (let k = 0; k < 13; k++) {
           if (shiftCount[0][j] == k) {
 
           }
 
-        }
-        if (shiftCount[0] == 0) {
-          const element = array[j];
         }
         else {
 
