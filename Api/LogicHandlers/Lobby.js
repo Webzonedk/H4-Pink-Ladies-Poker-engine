@@ -39,6 +39,7 @@ class PrivateLobby {
 
                     console.log("user: ", user);
                     this.pokerTables[i].users.push(user);
+                    this.pokerTables[i].waitingTimer = 5;
                     return;
                 }
 
@@ -69,6 +70,8 @@ class PrivateLobby {
         let pokerTable = new PokerTable();
         pokerTable.users.push(currentUser);
         this.pokerTables.push(pokerTable);
+       // console.log(this.pokerTables[0].users.length);
+        pokerTable.RunGame();
 
 
     }

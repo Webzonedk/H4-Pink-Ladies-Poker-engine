@@ -3,7 +3,7 @@
     userID;
     userName; 
     saldo;
-    pocketCards;
+    pocketCards= [];
     state;
     bet;
     constructor(){
