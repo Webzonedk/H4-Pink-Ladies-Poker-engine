@@ -183,10 +183,10 @@ app.get('/api/ruleManagerTest', (req, res) => {
   for (let i = 0; i < 2; i++) {
 
     let user = new User();
-    user.UserID = i;
-    user.UserName = "user_" + i + 1;
-    user.Saldo = 1000;
-    user.PocketCards = testPocketCards[i]
+    user.userID = i;
+    user.userName = "user_" + i + 1;
+    user.saldo = 1000;
+    user.pocketCards = testPocketCards[i]
 
 
     //add test users to poker table
