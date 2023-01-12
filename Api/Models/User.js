@@ -1,6 +1,7 @@
 
   class User{
     userID;
+    tableID;
     userName; 
     saldo;
     pocketCards= [];

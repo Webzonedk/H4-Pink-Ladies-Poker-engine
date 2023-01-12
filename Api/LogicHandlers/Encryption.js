@@ -37,8 +37,10 @@ class privateEncryption {
 
   //Symetric encryption to be used when both app and api has the AES keys
   EncryptAES = (dataToEncrypt) => {
+    console.log(dataToEncrypt);
     let cipher = crypto.createCipheriv(this.algorithm, this.key, this.iv);
-    let encryptedData = cipher.update(dataToEncrypt);
+    let buffer = Buffer.from(JSON.stringify(dataToEncrypt));
+    let encryptedData = cipher.update(buffer);
 
     encryptedData = Buffer.concat([encryptedData, cipher.final()]);
 
