@@ -53,7 +53,7 @@ class PrivateLobby {
     this.pokerTables.push(pokerTable);
     
     //run game
-   // pokerTable.RunGame();
+    pokerTable.RunGame();
   };
 }
 
