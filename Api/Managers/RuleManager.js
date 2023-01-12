@@ -234,19 +234,40 @@ class PrivateRuleManager {
       // }
 
     }
-    realWinnerHands =[...winnerHands]
-      for (let i = 1; i < winnerHands.length; i++) {
-        for (let j = 0; j < winnerHands[i].shifts.length; j++) {
-          if (winnerHands[i-1].shifts[winnerHands[i-1].shifts.length - (j + 1)] < winnerHands[i].shifts[winnerHands[i].shifts.length - (j + 1)]) {
-            winnerHands.slice(1);
-          }
+    realWinnerHands = [...winnerHands]
+    for (let i = 1; i < winnerHands.length; i++) {
+      if (i == 0) {
+        realWinnerHands.push(winnerHands[i]);
+      }
+      else if (winnerHands[i].shifts[0] == 0 && realWinnerHands[realWinnerHands.length - 1].shifts[0] != 0) {
+        realWinnerHands = [];
+        realWinnerHands.push(winnerHands[i]);
+      }
+      if (winnerHands[i].shifts[0] == 0 && realWinnerHands[realWinnerHands.length - 1].shifts[0] == 0) {
 
+        for (let j = 0; j < winnerHands[i].shifts.length; j++) {
+          if (winnerHands[i].shifts[winnerHands[i].shifts.length - (j + 1)] > realWinnerHands[realWinnerHands.length - 1].shifts[winnerHands[i].shifts.length - (j + 1)]) {
+            realWinnerHands = [];
+            realWinnerHands.push(winnerHands[i]);
+            j = winnerHands[i].shifts.length;
+          }
+          else if (winnerHands[i].shifts[winnerHands[i].shifts.length - (j + 1)] == realWinnerHands[realWinnerHands.length - 1].shifts[winnerHands[i].shifts.length - (j + 1)]) {
+            realWinnerHands.push(winnerHands[i]);
+            j = winnerHands[i].shifts.length;
+          }
         }
       }
-    
+    }
     console.log("all winnerHands: ", winnerHands);
+    console.log("all realWinnerHands: ", realWinnerHands);
     // console.log("winnerHands shifts: ", winnerHands[0].shifts);
   }
+
+
+
+
+
+
 
 
 
