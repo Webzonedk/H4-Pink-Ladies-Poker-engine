@@ -146,25 +146,26 @@ class PrivateRuleManager {
             winnerHands.push(highestHands[i]);
           }
           else {
-            for (let i = 0; i < highestHands.length - 1; i++) {
+            for (let j = 0; j < winnerHands.length; j++) {
 
-              for (let j = 0; j < winnerHands.length; j++) {
+              for (let k = 0; k < winnerHands[j].shifts.length; k++) {
 
-                for (let k = 0; k < winnerHands[j].shifts.length; k++) {
-
-                  if (winnerHands[j].shifts[winnerHands[i].shifts.length - (k + 1)] < highestHands[i + 1].shifts[winnerHands[i].shifts.length - (k + 1)]) {
-                    winnerHands = [];
-                    winnerHands.push(highestHands[i + 1]);
-                    //console.log("winnerHands was smaller: ");
-                  }
-                  // console.log("winnerHands shifts.length-j+1: ", winnerHands[j].shifts[winnerHands[i].shifts.length - (k + 1)]);
-                  // console.log("highestHands shifts.length-j+1: ", highestHands[i + 1].shifts[winnerHands[i].shifts.length - (k + 1)]);
+                if (highestHands[i].shifts[highestHands[j].shifts.length - (k + 1)]
+                  > winnerHands[j].shifts[winnerHands[j].shifts.length - (k + 1)]) {
+                  winnerHands = [];
+                  winnerHands.push(highestHands[i + 1]);
+                  //console.log("highest hand was higher than winnerhand: ");
                 }
-
+                else if (highestHands[i].shifts[highestHands[j].shifts.length - (k + 1)]
+                  == winnerHands[j].shifts[winnerHands[j].shifts.length - (k + 1)]) {
+                  winnerHands.push(highestHands[i + 1]);
+                  //console.log("winnerHands was equal: ");
+                }
+                // console.log("winnerHands shifts.length-j+1: ", winnerHands[j].shifts[winnerHands[i].shifts.length - (k + 1)]);
+                // console.log("highestHands shifts.length-j+1: ", highestHands[i + 1].shifts[winnerHands[i].shifts.length - (k + 1)]);
               }
-              // console.log("winnerHands length: ", winnerHands.length);
             }
-
+            // console.log("winnerHands length: ", winnerHands.length);
           }
           break;
 
@@ -172,30 +173,61 @@ class PrivateRuleManager {
           if (i == 0) {
             winnerHands.push(highestHands[i]);
           }
-          else if (highestHands[i].shifts[0] == 0 && highestHands[i].counts[0] == 2 && winnerHands[winnerHands.length - 1].shifts[0] == 0 &&winnerHands[winnerHands.length - 1].counts[0] == 2 ) {
+          else if (highestHands[i].shifts[0] == 0
+            && highestHands[i].counts[0] == 2
+            && winnerHands[winnerHands.length - 1].shifts[0] == 0
+            && winnerHands[winnerHands.length - 1].counts[0] == 2) {
             winnerHands.push(highestHands[i]);
           }
-          else{
-            for (let i = 0; i < highestHands.length; i++) {
-  
-              for (let j = 0; j < winnerHands[j].shifts.length; j++) {
-  
-                for (let k = 0; k < array.length; k++) {
-  
-                  if (winnerHands[j].shifts[winnerHands[i].shifts.length - (k + 1)] < highestHands[i + 1].shifts[winnerHands[i].shifts.length - (k + 1)]) {
-                    winnerHands = [];
-                    winnerHands.push(highestHands[i + 1]);
-                    //console.log("winnerHands was smaller: ");
-                  }
+          else {
+            for (let j = 0; j < winnerHands.length; j++) {
+
+              for (let k = 0; k < winnerHands[j].shifts.length; k++) {
+
+                if (highestHands[i].shifts[highestHands[i].shifts.length - (k + 1)]
+                  && highestHands[i].counts[highestHands[i].counts.length - (k + 1)]
+                  > winnerHands[j].shifts[winnerHands[j].shifts.length - (k + 1)]
+                  && winnerHands[j].counts[winnerHands[j].counts.length - (k + 1)]) {
+                  winnerHands = [];
+                  winnerHands.push(highestHands[i + 1]);
+                  //console.log("winnerHands was smaller: ");
                 }
               }
             }
-
           }
           break;
 
         case 3: //two-pair
+          if (i == 0) {
+            winnerHands.push(highestHands[i]);
+          }
+          else if (highestHands[i].shifts[0] == 0
+            && highestHands[i].counts[0] == 2
+            && winnerHands[winnerHands.length - 1].shifts[0] == 0
+            && winnerHands[winnerHands.length - 1].counts[0] == 2
+            && highestHands[i].shifts[highestHands[i].shifts.length -1] == 12
+            && highestHands[i].counts[highestHands[i].shifts.length -1] == 2
+            && winnerHands[winnerHands.length - 1].shifts[winnerHands[i].shifts.length -1] == 0
+            && winnerHands[winnerHands.length - 1].counts[winnerHands[i].shifts.length -1] == 2) {
+            winnerHands.push(highestHands[i]);
 
+          }
+          else {
+            for (let j = 0; j < winnerHands.length; j++) {
+
+              for (let k = 0; k < winnerHands[j].shifts.length; k++) {
+
+                if (highestHands[i].shifts[highestHands[i].shifts.length - (k + 1)]
+                  && highestHands[i].counts[highestHands[i].counts.length - (k + 1)]
+                  > winnerHands[j].shifts[winnerHands[j].shifts.length - (k + 1)]
+                  && winnerHands[j].counts[winnerHands[j].counts.length - (k + 1)]) {
+                  winnerHands = [];
+                  winnerHands.push(highestHands[i + 1]);
+                  //console.log("winnerHands was smaller: ");
+                }
+              }
+            }
+          }
           break;
         case 4: //three-of-a-kind
 
@@ -220,15 +252,8 @@ class PrivateRuleManager {
           break;
       }
 
-      //not in use
-      // for (let j = 0; j < shiftCount[0].length; j++) {
-      //   for (let k = 0; k < 13; k++) {
-      //     if (shiftCount[0][j] == k) {
-      //     }
-      //   }
-      // }
-
     }
+
     realWinnerHands = [...winnerHands]
     for (let i = 1; i < winnerHands.length; i++) {
       if (i == 0) {
@@ -241,12 +266,14 @@ class PrivateRuleManager {
       if (winnerHands[i].shifts[0] == 0 && realWinnerHands[realWinnerHands.length - 1].shifts[0] == 0) {
 
         for (let j = 0; j < winnerHands[i].shifts.length; j++) {
-          if (winnerHands[i].shifts[winnerHands[i].shifts.length - (j + 1)] > realWinnerHands[realWinnerHands.length - 1].shifts[winnerHands[i].shifts.length - (j + 1)]) {
+          if (winnerHands[i].shifts[winnerHands[i].shifts.length - (j + 1)]
+            > realWinnerHands[realWinnerHands.length - 1].shifts[winnerHands[i].shifts.length - (j + 1)]) {
             realWinnerHands = [];
             realWinnerHands.push(winnerHands[i]);
             j = winnerHands[i].shifts.length;
           }
-          else if (winnerHands[i].shifts[winnerHands[i].shifts.length - (j + 1)] == realWinnerHands[realWinnerHands.length - 1].shifts[winnerHands[i].shifts.length - (j + 1)]) {
+          else if (winnerHands[i].shifts[winnerHands[i].shifts.length - (j + 1)]
+            == realWinnerHands[realWinnerHands.length - 1].shifts[winnerHands[i].shifts.length - (j + 1)]) {
             realWinnerHands.push(winnerHands[i]);
             j = winnerHands[i].shifts.length;
           }
