@@ -168,34 +168,29 @@ class PrivateRuleManager {
           }
           break;
 
-        case 2: //one pair
+        case 2: //one pair - Comparing witch pair is highest
           if (i == 0) {
             winnerHands.push(highestHands[i]);
           }
-          else if (shiftCount[0] == 0 && highestHands[i].counts[0] == 2 && winnerHands[i] == 2) {
+          else if (highestHands[i].shifts[0] == 0 && highestHands[i].counts[0] == 2 && winnerHands[winnerHands.length - 1].shifts[0] == 0 &&winnerHands[winnerHands.length - 1].counts[0] == 2 ) {
             winnerHands.push(highestHands[i]);
           }
-          for (let i = 0; i < highestHands.length; i++) {
-
-            for (let j = 0; j < winnerHands[j].shifts.length; j++) {
-
-              for (let k = 0; k < array.length; k++) {
-
-                if (winnerHands[j].shifts[winnerHands[i].shifts.length - (k + 1)] < highestHands[i + 1].shifts[winnerHands[i].shifts.length - (k + 1)]) {
-                  winnerHands = [];
-                  winnerHands.push(highestHands[i + 1]);
-                  //console.log("winnerHands was smaller: ");
+          else{
+            for (let i = 0; i < highestHands.length; i++) {
+  
+              for (let j = 0; j < winnerHands[j].shifts.length; j++) {
+  
+                for (let k = 0; k < array.length; k++) {
+  
+                  if (winnerHands[j].shifts[winnerHands[i].shifts.length - (k + 1)] < highestHands[i + 1].shifts[winnerHands[i].shifts.length - (k + 1)]) {
+                    winnerHands = [];
+                    winnerHands.push(highestHands[i + 1]);
+                    //console.log("winnerHands was smaller: ");
+                  }
                 }
-
               }
+            }
 
-            }
-            if (condition) {
-              const element = array[i];
-              // if (shiftCount[0] == 0) {
-              //   winnerHands.push(shiftCount[0])
-              // }
-            }
           }
           break;
 
@@ -234,19 +229,40 @@ class PrivateRuleManager {
       // }
 
     }
-    realWinnerHands =[...winnerHands]
-      for (let i = 1; i < winnerHands.length; i++) {
-        for (let j = 0; j < winnerHands[i].shifts.length; j++) {
-          if (winnerHands[i-1].shifts[winnerHands[i-1].shifts.length - (j + 1)] < winnerHands[i].shifts[winnerHands[i].shifts.length - (j + 1)]) {
-            winnerHands.slice(1);
-          }
+    realWinnerHands = [...winnerHands]
+    for (let i = 1; i < winnerHands.length; i++) {
+      if (i == 0) {
+        realWinnerHands.push(winnerHands[i]);
+      }
+      else if (winnerHands[i].shifts[0] == 0 && realWinnerHands[realWinnerHands.length - 1].shifts[0] != 0) {
+        realWinnerHands = [];
+        realWinnerHands.push(winnerHands[i]);
+      }
+      if (winnerHands[i].shifts[0] == 0 && realWinnerHands[realWinnerHands.length - 1].shifts[0] == 0) {
 
+        for (let j = 0; j < winnerHands[i].shifts.length; j++) {
+          if (winnerHands[i].shifts[winnerHands[i].shifts.length - (j + 1)] > realWinnerHands[realWinnerHands.length - 1].shifts[winnerHands[i].shifts.length - (j + 1)]) {
+            realWinnerHands = [];
+            realWinnerHands.push(winnerHands[i]);
+            j = winnerHands[i].shifts.length;
+          }
+          else if (winnerHands[i].shifts[winnerHands[i].shifts.length - (j + 1)] == realWinnerHands[realWinnerHands.length - 1].shifts[winnerHands[i].shifts.length - (j + 1)]) {
+            realWinnerHands.push(winnerHands[i]);
+            j = winnerHands[i].shifts.length;
+          }
         }
       }
-    
+    }
     console.log("all winnerHands: ", winnerHands);
+    console.log("all realWinnerHands: ", realWinnerHands);
     // console.log("winnerHands shifts: ", winnerHands[0].shifts);
   }
+
+
+
+
+
+
 
 
 
