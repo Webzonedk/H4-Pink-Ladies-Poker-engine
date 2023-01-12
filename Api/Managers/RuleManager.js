@@ -36,7 +36,7 @@ class PrivateRuleManager {
     //Adding playerhands to temp array
     for (let i = 0; i < pokerTable.users.length; i++) {
       let userTempcards = [];
-      userTempcards = pokerTable.users[i].PocketCards;
+      userTempcards = pokerTable.users[i].pocketCards;
 
       //console.log("pokerTable collectivecards: ", pokerTable.collectiveCards);
 
@@ -117,6 +117,7 @@ class PrivateRuleManager {
   //----------------------------------------------------
   FindHighestHand = (highestHands) => {
     let winnerHands = [];
+    let realWinnerHands = [];
     // let _highestHands = highestHands;
     for (let i = 0; i < highestHands.length; i++) {
       let shiftCount = this.CountShifted(highestHands[i].cardResult.shift);
@@ -171,18 +172,22 @@ class PrivateRuleManager {
           if (i == 0) {
             winnerHands.push(highestHands[i]);
           }
-          else if (shiftCount[0] == 0 && highestHands[i].counts[0] == 2) {
+          else if (shiftCount[0] == 0 && highestHands[i].counts[0] == 2 && winnerHands[i] == 2) {
             winnerHands.push(highestHands[i]);
           }
           for (let i = 0; i < highestHands.length; i++) {
 
             for (let j = 0; j < winnerHands[j].shifts.length; j++) {
 
-             for (let k = 0; k < array.length; k++) {
-             
-              
-              
-             }
+              for (let k = 0; k < array.length; k++) {
+
+                if (winnerHands[j].shifts[winnerHands[i].shifts.length - (k + 1)] < highestHands[i + 1].shifts[winnerHands[i].shifts.length - (k + 1)]) {
+                  winnerHands = [];
+                  winnerHands.push(highestHands[i + 1]);
+                  //console.log("winnerHands was smaller: ");
+                }
+
+              }
 
             }
             if (condition) {
@@ -229,6 +234,16 @@ class PrivateRuleManager {
       // }
 
     }
+    realWinnerHands =[...winnerHands]
+      for (let i = 1; i < winnerHands.length; i++) {
+        for (let j = 0; j < winnerHands[i].shifts.length; j++) {
+          if (winnerHands[i-1].shifts[winnerHands[i-1].shifts.length - (j + 1)] < winnerHands[i].shifts[winnerHands[i].shifts.length - (j + 1)]) {
+            winnerHands.slice(1);
+          }
+
+        }
+      }
+    
     console.log("all winnerHands: ", winnerHands);
     // console.log("winnerHands shifts: ", winnerHands[0].shifts);
   }
