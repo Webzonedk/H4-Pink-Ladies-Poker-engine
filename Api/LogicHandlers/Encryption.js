@@ -1,6 +1,8 @@
 const crypto = require("crypto");
+const Websocket = require("../Providers/Websocket");
 class privateEncryption {
   
+  WebSocket = require('../Providers/Websocket').WebSocket;
   
   key;
   iv;
@@ -24,6 +26,9 @@ class privateEncryption {
     );
 
     console.log("encypted data: ", encryptedData.toString("base64"));
+      //establish websocket connection
+      Websocket.GetInstance().InitializeServer();
+
     return encryptedData;
   };
 
@@ -45,6 +50,7 @@ class privateEncryption {
     encryptedData = Buffer.concat([encryptedData, cipher.final()]);
 
     //send to websocket
+    this.WebSocket.GetInstance().SendMessage(encryptedData);
 
     console.log("encrypted data: ", encryptedData.toString("hex"));
     return encryptedData;
