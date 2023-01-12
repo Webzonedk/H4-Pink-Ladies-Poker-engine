@@ -169,8 +169,8 @@ app.get('/api/ruleManagerTest', (req, res) => {
   //-----------------------------------------------
   //Creating a testPokerTable object
   //-----------------------------------------------
-  let testPocketCards = [["3D", "7H"],["3D", "8H"]]; //high card
-  //let testPocketCards = [["3D", "7H"], ["5S", "6S"]]; //one pair
+  //let testPocketCards = [["3D", "7H"],["3D", "8H"]]; //high card
+  let testPocketCards = [["10D", "7H"], ["kS", "6S"]]; //one pair
   //let testPocketCards = [["3D", "7H"], ["5D", "6S"], ["5S", "jS"]]; //one pair * 2
   //let testPocketCards = [["3D", "7H"], ["5S", "6S"], ["5D", "jS"], ["10D", "10S"], ["2S", "9S"], ["aD", "8D"]]; //With two straights high and low
   // testPocketCards=[["1x card"], ["1 x pair"], ["2 x pair"], ["3 x kind "], ["straight"], ["flush   "], ["full hou"], ["4 x kind  "], ["str flu"],["royal flu"]]

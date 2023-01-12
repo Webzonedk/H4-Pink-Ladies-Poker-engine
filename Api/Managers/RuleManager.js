@@ -125,8 +125,10 @@ class PrivateRuleManager {
 
       // console.log("shift in FindHighestHand: ", shiftCount[0]); //DEBUG
       // console.log("Counts in FindHighestHand: ", shiftCount[1]); //DEBUG
+
       // console.log("highestHands shifts in FindHighestHand: ", highestHands[i].shifts); //DEBUG
       // console.log("highestHands counts in FindHighestHand: ", highestHands[i].counts); //DEBUG
+
       // console.log("highestHands shifts in FindHighestHand 0: ", highestHands[i].shifts[0]); //DEBUG
       // console.log("highestHands counts in FindHighestHand 0: ", highestHands[i].counts[0]); //DEBUG
 
@@ -146,28 +148,50 @@ class PrivateRuleManager {
             for (let i = 0; i < highestHands.length - 1; i++) {
 
               for (let j = 0; j < winnerHands.length; j++) {
+
                 for (let k = 0; k < winnerHands[j].shifts.length; k++) {
-                  if (winnerHands[j].shifts[winnerHands[i].shifts.length - (k + 1)] < highestHands[i+1].shifts[winnerHands[i].shifts.length - (k + 1)]) {
+
+                  if (winnerHands[j].shifts[winnerHands[i].shifts.length - (k + 1)] < highestHands[i + 1].shifts[winnerHands[i].shifts.length - (k + 1)]) {
                     winnerHands = [];
-                    winnerHands.push(highestHands[i+1]);
-                    console.log("winnerHands was smaller: ");
+                    winnerHands.push(highestHands[i + 1]);
+                    //console.log("winnerHands was smaller: ");
                   }
-                  console.log("winnerHands shifts.length-j+1: ", winnerHands[j].shifts[winnerHands[i].shifts.length - (k + 1)]);
-                  console.log("highestHands shifts.length-j+1: ", highestHands[i+1].shifts[winnerHands[i].shifts.length - (k + 1)]);
+                  // console.log("winnerHands shifts.length-j+1: ", winnerHands[j].shifts[winnerHands[i].shifts.length - (k + 1)]);
+                  // console.log("highestHands shifts.length-j+1: ", highestHands[i + 1].shifts[winnerHands[i].shifts.length - (k + 1)]);
                 }
 
               }
-             // console.log("winnerHands length: ", winnerHands.length);
+              // console.log("winnerHands length: ", winnerHands.length);
             }
 
           }
-
           break;
 
         case 2: //one pair
-          // if (shiftCount[0] == 0) {
-          //   winnerHands.push(shiftCount[0])
-          // }
+          if (i == 0) {
+            winnerHands.push(highestHands[i]);
+          }
+          else if (shiftCount[0] == 0 && highestHands[i].counts[0] == 2) {
+            winnerHands.push(highestHands[i]);
+          }
+          for (let i = 0; i < highestHands.length; i++) {
+
+            for (let j = 0; j < winnerHands[j].shifts.length; j++) {
+
+             for (let k = 0; k < array.length; k++) {
+             
+              
+              
+             }
+
+            }
+            if (condition) {
+              const element = array[i];
+              // if (shiftCount[0] == 0) {
+              //   winnerHands.push(shiftCount[0])
+              // }
+            }
+          }
           break;
 
         case 3: //two-pair
@@ -471,24 +495,26 @@ class PrivateRuleManager {
     return result;
 
   };
-  // //Counting groups in shifted to count instance of each 
+  //Counting groups in shifted to count instance of each faces
   CountShifted = (shifted) => {
-    // let count = { key: 0, value: 0 };
     this.shifts = [];
     this.counts = [];
-    let previousIndex;
+    let previousIndex = 0;
     for (let index of shifted) {
       if (index !== previousIndex) {
         this.shifts.push(index);
         this.counts.push(1);
+        previousIndex = index;
+        // console.log("previousIndex: ",previousIndex); //DEBUG
+        // console.log("index: ",index); //DEBUG
       }
       else {
-        ++counts[counts.length - 1];
+        this.counts[this.counts.length - 1]++;
         previousIndex = index;
       }
     }
-    // console.log("CountShifted Shifts: " , shifted); //DEBUG
-    //  console.log("CountShifted-counts: " , this.shifts, this.counts); //DEBUG
+    // console.log("CountShifted Shifts: ", shifted); //DEBUG
+    console.log("CountShifted-counts: ", this.shifts, this.counts); //DEBUG
 
     return [this.shifts, this.counts];//Fields
   }
