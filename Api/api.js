@@ -61,13 +61,15 @@ const decryptedUser = Encryption.GetInstance().DecryptAES(encrypted);
 //user interactions
 app.post('/api/Useraction', (req, res) => {
 
-  const encryptedUserAction = req.body.userAction;
+  const encryptedUserAction = req.body;
   //test encryption
+  console.log("before encryption: ", encryptedUserAction);
   const encrypted = Encryption.GetInstance().EncryptAES(encryptedUserAction);
 
-
-  const decryptedUserAction = Encryption.GetInstance().DecryptAES(encryptedUserAction);
-  Lobby.GetInstance().pokerTables[decryptedUserAction.tableID].UpdateUserState(decryptedUserAction.action, decryptedUserAction.value);
+  const decryptedUserAction = Encryption.GetInstance().DecryptAES(encrypted);
+  console.log("decrypted: ", decryptedUserAction);
+ // console.log(Lobby.GetInstance().pokerTables[decryptedUserAction.tableID]);
+  Lobby.GetInstance().pokerTables[decryptedUserAction.tableID].UpdateUserState(decryptedUserAction.id,decryptedUserAction.action, decryptedUserAction.value);
  
 
   res.status(200).send("user interacting");

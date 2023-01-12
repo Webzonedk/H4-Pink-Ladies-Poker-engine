@@ -61,7 +61,7 @@ class PokerTable {
                         this.waitingTimer = 5;
                         this.ClearCurrentInterval(CountdownTimer);
 
-                        //run game loop
+
                         //create new card deck
                         this.cardDeck = this.CardDeckManager.GetInstance().NewCardDeck();
                         // console.log("carddeck: ", this.cardDeck);
@@ -70,25 +70,19 @@ class PokerTable {
                         this.AddRoles();
 
 
-
-                        //  console.log("small blind: ", this.smallBlind);
-                        //  console.log("big blind: ", this.bigBlind);
-                        // console.log("dealer ", this.dealer);
-
                         //deal pocket cards
                         this.DealPocketCards();
                         this.round++;
-                        // console.log("user pocket cards: ", this.users[0].pocketCards);
-                        //-----------------------
+
 
                         //activate check for players that no longer is playable
-                        let kickLoop = setInterval(() => {
-                            this.VerifyOrKickPlayer();
-                           
-                            if (this.users.length < 2) {
-                                this.ClearCurrentInterval(kickLoop);
-                            }
-                        }, 1000);
+                        // let kickLoop = setInterval(() => {
+                        //     this.VerifyOrKickPlayer();
+
+                        //     if (this.users.length < 2) {
+                        //         this.ClearCurrentInterval(kickLoop);
+                        //     }
+                        // }, 1000);
 
                         if (this.round > 0) {
                             //check when every player has had their turn
@@ -122,6 +116,10 @@ class PokerTable {
 
                                     //set next round
                                     this.round++;
+
+                                    //collect totalbet into total pot
+                                    this.totalPot += this.totalBet;
+
                                     console.log("Ready for next round: ", this.round);
 
 
@@ -135,7 +133,12 @@ class PokerTable {
 
                                     //compare all hands
                                     let pokerTableSnapshot = this.CreateSnapshot();
-                                    this.RuleManager.GetInstance().CompareHands(pokerTableSnapshot);
+                                    
+                                    console.log("cards analyzed, everyone wins!");
+                                    // this.RuleManager.GetInstance().CompareHands(pokerTableSnapshot);
+
+                                    //kick players without saldo
+                                    this.VerifyOrKickPlayer();
                                 }
 
                             }, 1000);
@@ -149,10 +152,40 @@ class PokerTable {
                                     this.ClearCurrentInterval(turnChanger);
                                 }
 
+                                //automatic set state if player does nothing
                                 if (this.users[this.currentUser].state == " ") {
                                     this.users[this.currentUser].state = "fold";
                                 }
-                                //  console.log(this.users[this.currentUser]);
+                                else {
+                                    //logic for player bet
+                                    let action = this.users[this.currentUser].state;
+                                    switch (action) {
+                                        case "bet":
+                                            let bet = this.users[this.currentUser].bet;
+                                            this.totalBet = bet;
+                                            this.users[this.currentUser].saldo -= bet;
+                                            break;
+                                        case "fold":
+                                            this.users[this.currentUser].pocketCards = [];
+                                            break;
+                                        case "call":
+
+                                            break;
+                                        case "raise":
+
+                                            break;
+                                        default:
+                                            break;
+                                    }
+
+
+
+                                    //logic for player raise
+                                }
+
+
+
+
                                 //next turn
                                 this.SetCurrentUser();
 
@@ -206,6 +239,7 @@ class PokerTable {
             currentUser: this.currentUser,
             round: this.round,
         };
+        
         return snapshot;
     };
 
@@ -276,8 +310,11 @@ class PokerTable {
     };
 
     UpdateUserState = (id, action, value) => {
-        this.users[id].state = action;
-        this.users[id].bet = value;
+        let index = this.users.findIndex((user) => user.userID == id);
+        this.users[index].state = action;
+        this.users[index].bet = value;
+
+        console.log("user interacting: ", this.users[index]);
     };
 
     //Set next user index
