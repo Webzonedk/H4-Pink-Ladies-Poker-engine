@@ -66,7 +66,7 @@ app.post('/api/Useraction', (req, res) => {
   const encrypted = Encryption.GetInstance().EncryptAES(encryptedUserAction);
 
 
-  const decryptedUserAction = Encryption.GetInstance().DecryptAES(encryptedUserAction);
+  const decryptedUserAction = Encryption.GetInstance().DecryptAES(encrypted);
   Lobby.GetInstance().pokerTables[decryptedUserAction.tableID].UpdateUserState(decryptedUserAction.action, decryptedUserAction.value);
  
 

@@ -1,73 +1,73 @@
 const User = require("../Models/User").User;
 class PokerTable {
-    CleaningLady = require("../LogicHandlers/CleaningLady").CleaningLady;
-    CardDeckManager = require("../Managers/CardDeckManager").CardDeckManager;
-    Encryption = require("../LogicHandlers/Encryption").Encryption;
-    RuleManager = require("../Managers/RuleManager").RuleManager;
+  CleaningLady = require("../LogicHandlers/CleaningLady").CleaningLady;
+  CardDeckManager = require("../Managers/CardDeckManager").CardDeckManager;
+  Encryption = require("../LogicHandlers/Encryption").Encryption;
+  RuleManager = require("../Managers/RuleManager").RuleManager;
 
-    users = [];
-    bets = [];
-    collectiveCards = [];
-    cardDeck = [];
-    dealer;
-    smallBlind;
-    bigBlind;
-    currentBet;
-    totalBet;
-    totalPot;
-    currentUser;
-    round;
-    waitingTimer;
+  users = [];
+  bets = [];
+  collectiveCards = [];
+  cardDeck = [];
+  dealer;
+  smallBlind;
+  bigBlind;
+  currentBet;
+  totalBet;
+  totalPot;
+  currentUser;
+  round;
+  waitingTimer;
 
-    constructor() {
-        this.dealer = 0;
-        this.smallBlind = 0;
-        this.bigBlind = 0;
-        this.currentBet = 0;
-        this.totalBet = 0;
-        this.totalPot = 0;
-        this.currentUser = 0;
-        this.round = 0;
-        this.waitingTimer = 5;
-    }
+  constructor() {
+    this.dealer = 0;
+    this.smallBlind = 0;
+    this.bigBlind = 0;
+    this.currentBet = 0;
+    this.totalBet = 0;
+    this.totalPot = 0;
+    this.currentUser = 0;
+    this.round = 0;
+    this.waitingTimer = 5;
+  }
 
-    //run the Master loop
-    RunGame = () => {
-        //test observing how many users has attended, and reset timer when new user arrive
-        if (this.waitingTimer > 0) {
-            //check
-            let aboveOne = false;
-            let checkUserTimer = setInterval(() => {
-                if (this.users.length >= 2) {
-                    aboveOne = true;
-                } else {
-                    aboveOne = false;
-                }
+  //run the Master loop
+  RunGame = () => {
+    //test observing how many users has attended, and reset timer when new user arrive
+    if (this.waitingTimer > 0) {
+      //check
+      let aboveOne = false;
+      let checkUserTimer = setInterval(() => {
+        if (this.users.length >= 2) {
+          aboveOne = true;
+        } else {
+          aboveOne = false;
+        }
 
-                if (this.waitingTimer <= 0) {
-                    console.log("kill");
-                    this.ClearCurrentInterval(checkUserTimer);
-                }
-            }, 100 / 15);
+        if (this.waitingTimer <= 0) {
+          console.log("kill");
+          this.ClearCurrentInterval(checkUserTimer);
+        }
+      }, 100 / 15);
 
-            //count down if players are above 1
-            let CountdownTimer = setInterval(() => {
-                if (aboveOne) {
-                    this.waitingTimer -= 1;
-                    console.log(this.waitingTimer);
+      //count down if players are above 1
+      let CountdownTimer = setInterval(() => {
+        if (aboveOne) {
+          this.waitingTimer -= 1;
+          console.log(this.waitingTimer);
 
-                    if (this.waitingTimer <= 0) {
-                        console.log("stop countdown");
-                        this.waitingTimer = 5;
-                        this.ClearCurrentInterval(CountdownTimer);
+          if (this.waitingTimer <= 0) {
+            console.log("stop countdown");
+            this.waitingTimer = 5;
+            this.ClearCurrentInterval(CountdownTimer);
 
-                        //run game loop
-                        //create new card deck
-                        this.cardDeck = this.CardDeckManager.GetInstance().NewCardDeck();
-                        // console.log("carddeck: ", this.cardDeck);
+            //run game loop
+            //create new card deck
+            this.cardDeck = this.CardDeckManager.GetInstance().NewCardDeck();
+            // console.log("carddeck: ", this.cardDeck);
 
-                        //add roles to users
-                        this.AddRoles();
+            //add roles to users
+            this.AddRoles();
 
             //check player saldo
             //this.VerifyOrKickPlayer();
@@ -76,11 +76,11 @@ class PokerTable {
             //  console.log("big blind: ", this.bigBlind);
             // console.log("dealer ", this.dealer);
 
-                        //deal pocket cards
-                        this.DealPocketCards();
-                        this.round++;
-                        // console.log("user pocket cards: ", this.users[0].pocketCards);
-                        //-----------------------
+            //deal pocket cards
+            this.DealPocketCards();
+            this.round++;
+            // console.log("user pocket cards: ", this.users[0].pocketCards);
+            //-----------------------
 
             //activate check for players that no longer is playable
             let kickLoop = setInterval(() => {
@@ -99,42 +99,41 @@ class PokerTable {
                 if (!this.users.find((user) => user.state == " ")) {
                   console.log("all done!");
 
-                                    //deal cards for next round
-                                    this.DealCards();
+                  //deal cards for next round
+                  this.DealCards();
 
                   //send snapshot
                   let snapshot = this.CreateSnapshot();
                   this.Encryption.GetInstance().EncryptAES(snapshot);
 
-                                    //reset users
-                                    for (let i = 0; i < this.users.length; i++) {
-                                        this.users[i].state = " ";
-                                        this.users[i].bet = 0;
-                                    }
+                  //reset users
+                  for (let i = 0; i < this.users.length; i++) {
+                    this.users[i].state = " ";
+                    this.users[i].bet = 0;
+                  }
 
-                                    //set next round
-                                    this.round++;
-                                    console.log("Ready for next round: ", this.round);
-
-                  
+                  //set next round
+                  this.round++;
+                  console.log("Ready for next round: ", this.round);
                 }
-                
+
                 console.log("are they done? ", roundIsDone);
                 //stop the round and analyze the hands
-                if(this.round > 3)
-                {
+                if (this.round > 3) {
                   this.ClearCurrentInterval(playerChecker);
-                    console.log("ready to analyze");
-                  
-                    //compare all hands
-                  //this.RuleManager.GetInstance().CompareHands();
-                }
+                  console.log("ready to analyze");
 
-                            }, 1000);
+                  //compare all hands
+                  //this.RuleManager.GetInstance().CompareHands();
+
+                  //kick players with zero saldo
+                  this.VerifyOrKickPlayer();
+                }
+              }, 1000);
 
               //change turn every 5 second
-           let turnChanger =   setInterval(() => {
-               // console.log("please do an action");
+              let turnChanger = setInterval(() => {
+                // console.log("please do an action");
 
                 if (this.users[this.currentUser].state == " ") {
                   this.users[this.currentUser].state = "fold";
@@ -143,41 +142,27 @@ class PokerTable {
                 //next turn
                 this.SetCurrentUser();
 
-                                //send snapshot
-                                let snapshot = this.CreateSnapshot();
-                                this.Encryption.GetInstance().EncryptAES(snapshot);
+                //send snapshot
+                let snapshot = this.CreateSnapshot();
+                this.Encryption.GetInstance().EncryptAES(snapshot);
 
-                                //stop after this round
-                                if (this.round > 3) {
-                                    console.log("no more rounds");
-                                    this.ClearCurrentInterval(turnChanger);
-                                }
+                //stop after this round
+                if (this.round > 3) {
+                  console.log("no more rounds");
+                  this.ClearCurrentInterval(turnChanger);
+                }
+              }, 5000);
+            }
 
-                            }, 5000);
-                        }
-
-            //game begins
-            // setInterval(() => {
-            //   console.log("game is ready to begin!");
-            // }, 5000);
+           
           }
         }
       }, 250);
 
-      console.log("stop");
+      
     }
 
-        //runs every round until winner is found
-        //----------------------
-
-        //check state and bet for next user, then wait a few seconds
-
-        //clear user state when all users has done their bet
-
-        //Deal new card to pokertable
-        //----------------------
-
-    //  }
+    
   };
 
   //create snapshot of pokertable
