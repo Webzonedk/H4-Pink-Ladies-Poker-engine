@@ -172,8 +172,15 @@ app.get('/api/ruleManagerTest', (req, res) => {
   //-----------------------------------------------
   //Creating a testPokerTable object
   //-----------------------------------------------
-  //let testPocketCards = [["3D", "7H"],["3D", "8H"]]; //high card
-  let testPocketCards = [["10D", "7H"], ["kS", "6S"]]; //one pair
+  let testPocketCards = [["3D", "7H"],["3D", "8H"]]; //high card
+  // let testPocketCards = [["10D", "7H"], ["2S", "5D"]]; //1 pair
+  // let testPocketCards = [["10D", "5H"], ["kS", "10S"]]; //2 pair
+  // let testPocketCards = [["10D", "10H"], ["jD", "jS"]]; //3 of a kind
+  // let testPocketCards = [["4D", "8H"], ["kD", "4S"]]; //straight
+  // let testPocketCards = [["4C", "8H"], ["7C", "4S"]]; //flush
+  // let testPocketCards = [["10D", "10H"], ["8D", "8S"]]; //full house
+  // let testPocketCards = [["10D", "10H"], ["jD", "jS"]]; //4 of a kind
+  // let testPocketCards = [["4C", "8C"], ["kC", "4S"]]; //straight flush
   //let testPocketCards = [["3D", "7H"], ["5D", "6S"], ["5S", "jS"]]; //one pair * 2
   //let testPocketCards = [["3D", "7H"], ["5S", "6S"], ["5D", "jS"], ["10D", "10S"], ["2S", "9S"], ["aD", "8D"]]; //With two straights high and low
   // testPocketCards=[["1x card"], ["1 x pair"], ["2 x pair"], ["3 x kind "], ["straight"], ["flush   "], ["full hou"], ["4 x kind  "], ["str flu"],["royal flu"]]
@@ -196,8 +203,12 @@ app.get('/api/ruleManagerTest', (req, res) => {
     pokerTable.users.push(user);
 
   }
-  // pokerTable.collectiveCards=["10C", "jC", "qC", "kC", "8H"];
-  pokerTable.collectiveCards = ["10C", "jC", "qC", "kC", "5H"];
+  // pokerTable.collectiveCards=["10C", "jC", "qC", "kC", "8H"]; //straight flush and royal straight flush test
+  // pokerTable.collectiveCards=["10C", "jC", "qC", "9C", "8H"]; //straight flush
+  //pokerTable.collectiveCards = ["10C", "jC", "qC", "5C", "9H"]; //straight and flush, 
+  // pokerTable.collectiveCards = ["10C", "jC", "8C", "jC", "5H"]; //3 - 4 of a kind
+  //pokerTable.collectiveCards = ["10C", "jC", "qC", "kC", "5H"]; 1 x pair, 2 pairs,
+  pokerTable.collectiveCards = ["10C", "jC", "4C", "9C", "5H"]; //high card
 console.log("Pokertable: " + pokerTable);
   //-----------------------------------------------
   //-----------------------------------------------
