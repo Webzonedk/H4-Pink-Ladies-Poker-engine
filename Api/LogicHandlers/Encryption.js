@@ -63,7 +63,7 @@ class privateEncryption {
     let decipher = crypto.createDecipheriv(this.algorithm, this.key, this.iv);
     let decryptedData = decipher.update(encryptedText, "hex", "utf-8");
     decryptedData += decipher.final("utf8");
-    return decryptedData.toString();
+    return JSON.parse(decryptedData);
   };
 }
 
