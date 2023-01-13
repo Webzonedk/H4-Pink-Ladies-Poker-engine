@@ -1,5 +1,5 @@
 const crypto = require("crypto");
-const Websocket = require("../Providers/Websocket");
+//const Websocket = require("../Providers/Websocket");
 class privateEncryption {
   
   WebSocket = require('../Providers/Websocket').WebSocket;
@@ -10,24 +10,25 @@ class privateEncryption {
 
   //Encrypting the AES key and IV to be sent back to app in RSA encrypted format.
   EncryptRSA = (publickey) => {
-    console.log(publickey);
-    const data = { key: key, iv: iv };
-
-    data2 = "test";
+    const data = { key: this.key, iv: this.iv };
+    
+    let data2 = "hello";
+    
 
     const encryptedData = crypto.publicEncrypt(
       {
         key: publickey,
-        padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
-        oaepHash: "sha256",
+         padding: crypto.constants.RSA_PKCS1_PADDING,
+        // oaepHash: "sha256",
       },
       // Converting the json object to a buffer
-      Buffer.from(data2)
+      // Buffer.from(JSON.stringify(data2))
+      data2
     );
 
     console.log("encypted data: ", encryptedData.toString("base64"));
       //establish websocket connection
-      Websocket.GetInstance().InitializeServer();
+      this.WebSocket.GetInstance().InitializeServer();
 
     return encryptedData;
   };
@@ -37,7 +38,8 @@ class privateEncryption {
     this.key = crypto.randomBytes(32);
     this.iv = crypto.randomBytes(16);
 
-    console.log("keys generated...", this.key, this.iv);
+    console.log("key generated...", this.key);
+    console.log("iv generated...", this.iv);
   };
 
   //Symetric encryption to be used when both app and api has the AES keys

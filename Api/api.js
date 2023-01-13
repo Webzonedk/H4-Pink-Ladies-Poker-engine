@@ -28,10 +28,10 @@ const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
 });
 
 //Get AES keys
-app.get("/api/GetAES", (req, res) => {
-  const key = req.body.publicKey;
-  console.log(publicKey);
-  const encryptedData = Encryption.GetInstance().EncryptRSA(publicKey);
+app.post("/api/GetAES", (req, res) => {
+  const publicKeyFromApp = req.body.publicKey;
+  //console.log(publicKeyFromApp);
+  const encryptedData = Encryption.GetInstance().EncryptRSA(publicKeyFromApp);
 
   res.status(200).send(encryptedData);
 });
