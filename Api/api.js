@@ -54,14 +54,15 @@ app.post("/api/CreateUser", (req, res) => {
 
 //user interactions
 app.post("/api/Useraction", (req, res) => {
-  const encryptedUserAction = req.body.userAction;
+  const encryptedUserAction = req.body;
   //test encryption
   const encrypted = Encryption.GetInstance().EncryptAES(encryptedUserAction);
 
 
 
   const decryptedUserAction = Encryption.GetInstance().DecryptAES(encrypted);
-  Lobby.GetInstance().pokerTables[decryptedUserAction.tableID].UpdateUserState(decryptedUserAction.action, decryptedUserAction.value);
+  console.log(decryptedUserAction);
+  Lobby.GetInstance().pokerTables[decryptedUserAction.tableID].UpdateUserState(decryptedUserAction.id,decryptedUserAction.action, decryptedUserAction.value);
  
 
 
