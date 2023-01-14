@@ -176,9 +176,9 @@ app.get('/api/ruleManagerTest', (req, res) => {
   // let testPocketCards = [["2S", "5D"],["10D", "7H"]]; //1 pair
   // let testPocketCards = [["10D", "5H"], ["kS", "10S"]]; //2 pair
   // let testPocketCards = [["10D", "10H"], ["jD", "jS"]]; //3 of a kind
-  // let testPocketCards = [["4D", "8H"], ["kD", "4S"]]; //straight
+  let testPocketCards = [["4D", "8H"], ["kD", "4S"]]; //straight
   // let testPocketCards = [["4C", "8H"], ["7C", "4S"]]; //flush
-  let testPocketCards = [["jD", "10S"], ["kD", "10H"]]; //full house
+  // let testPocketCards = [["jD", "10S"], ["kD", "10H"]]; //full house
   // let testPocketCards = [["10D", "10H"], ["jD", "jS"]]; //4 of a kind
   // let testPocketCards = [["4C", "8C"], ["kC", "4S"]]; //straight flush
   //let testPocketCards = [["3D", "7H"], ["5D", "6S"], ["5S", "jS"]]; //one pair * 2
@@ -205,9 +205,10 @@ app.get('/api/ruleManagerTest', (req, res) => {
   }
   // pokerTable.collectiveCards=["10C", "jC", "qC", "kC", "8H"]; //straight flush and royal straight flush test
   // pokerTable.collectiveCards=["10C", "jC", "qC", "9C", "8H"]; //straight flush
-  //pokerTable.collectiveCards = ["10C", "jC", "qC", "5C", "9H"]; //straight and flush, 
-  pokerTable.collectiveCards = ["10C", "10D", "jK", "jC", "kH"]; //Full house
-  // pokerTable.collectiveCards = ["10C", "7C", "8C", "jC", "5H"]; //3 - 4 of a kind
+  pokerTable.collectiveCards = ["10C", "jC", "qC", "5C", "9H"]; //straight and flush, 
+  // pokerTable.collectiveCards = ["10C", "10D", "jK", "jC", "kH"]; //Full house
+  // pokerTable.collectiveCards = ["10C", "7C", "8C", "jC", "5H"]; //3 of a kind
+  // pokerTable.collectiveCards = ["10C", "10S", "jH", "jC", "5H"]; //4 of a kind
   // pokerTable.collectiveCards = ["10C", "jC", "qC", "kC", "5H"]; // 1 x pair, 2 pairs,
   // pokerTable.collectiveCards = ["10C", "jC", "4C", "9C", "5H"]; //high card
 

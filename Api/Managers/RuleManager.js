@@ -315,18 +315,78 @@ class PrivateRuleManager {
           }
           break;
         case 5: //straight
+          let highestHandShiftsArrays = [];
+          let highestHandStraightKicker;
+          let winnerHandShiftsArrays = [];
+          let winnerHandStraightKicker;
           if (i == 0) {
             winnerHands.push(highestHands[i]);
           }
-          // checking if ace high
-          if (highestHands[i].cardResult.shifts[0] == 0 && winnerHands[i].cardResult.shifts[0] == 0) {
-            for (let j = 0; j < highestHands[i].shifts.length; j++) {
-              if (highestHands[i].shifts[highestHands[i].shifts.length - 1] = 12) {
-
-              }
-              winnerHands.push(highestHands[i]);
+          for (let j = 0; j < highestHands[i].cardResult.shifts.length; j++) {
+            if (highestHandShiftsArrays.length == 0) {
+              highestHandShiftsArrays.push(highestHands[i].cardResult.shifts[j]);
+            }
+            else if (highestHandShiftsArrays.length < 4
+              && highestHands[i].cardResult.shifts[j]
+              > highestHandShiftsArrays[highestHandShiftsArrays.length-1] + 1) {
+              highestHandShiftsArrays = [];
+              highestHandShiftsArrays.push(highestHands[i].cardResult.shifts[j]);
+            }
+            else if (highestHands[i].cardResult.shifts[j]
+              == highestHandShiftsArrays[highestHandShiftsArrays.length-1] + 1) {
+              highestHandShiftsArrays.push(highestHands[i].cardResult.shifts[j]);
             }
           }
+          //Checking winnerhands for highest card in straight
+          for (let j = 0; j < winnerHands[i].cardResult.shifts.length; j++) {
+            if (winnerHandShiftsArrays.length == 0) {
+              winnerHandShiftsArrays.push(winnerHands[i].cardResult.shifts[j]);
+            }
+            else if (winnerHandShiftsArrays.length < 4
+              && winnerHands[i].cardResult.shifts[j]
+              > winnerHandShiftsArrays[winnerHandShiftsArrays.length-1] + 1) {
+              winnerHandShiftsArrays = [];
+              winnerHandShiftsArrays.push(winnerHands[i].cardResult.shifts[j]);
+            }
+            else if (winnerHands[i].cardResult.shifts[j]
+              == winnerHandShiftsArrays[winnerHandShiftsArrays.length-1] + 1) {
+              winnerHandShiftsArrays.push(winnerHands[i].cardResult.shifts[j]);
+            }
+          }
+          //Checking if highestHandShiftsArrays contains aces
+          if (highestHands[0] == 0 && highestHandShiftsArrays[highestHandShiftsArrays.length - 1] == 12) {
+            highestHandStraightKicker = 13
+          }
+          else {
+            highestHandStraightKicker = highestHandShiftsArrays[highestHandShiftsArrays.length - 1]
+            console.log("highestHandShiftsArrays: ", highestHandShiftsArrays);
+            console.log("highestHandStraightKicker: ", highestHandStraightKicker);
+          }
+         
+          if (winnerHands[0] == 0 && winnerHandShiftsArrays[winnerHandShiftsArrays.length - 1] == 12) {
+            winnerHandStraightKicker = 13
+          }
+          else {
+            winnerHandStraightKicker = winnerHandShiftsArrays[winnerHandShiftsArrays.length - 1]
+            console.log("winnerHandShiftsArrays: ", winnerHandShiftsArrays);
+            console.log("winnerHandStraightKicker: ", winnerHandStraightKicker);
+          }
+          if (highestHandStraightKicker > winnerHandStraightKicker) { 
+            winnerHands = [];
+            winnerHands.push(highestHands[i]);
+            //console.log("winnerHands was smaller: ");
+          }
+          else if (highestHandStraightKicker == winnerHandStraightKicker) {
+            winnerHands.push(highestHands[i]);
+            //console.log("winnerHands was equal: ");
+          }
+
+
+
+
+
+          //Checking if winnerHandShiftsArrays contains aces
+
           break;
         case 6: //flush
 
@@ -397,28 +457,28 @@ class PrivateRuleManager {
           }
           // find pair ito compair in both highestHands and winnerHands
           else {
-            let winnerHandsHighestPair;
-            let highestHandsHighestPair;
-            for (let j = 0; j < winnerHands[winnerHands.length - 1].shifts.length; j++) {
-              if (winnerHands[winnerHands.length - 1].counts[winnerHands[j].counts.length - (j + 1)] == 4) {
-                winnerHandsHighestPair = winnerHands[winnerHands.length - 1].shifts[winnerHands[j].shifts.length - (j + 1)]
+            let winnerHandsFour;
+            let highestHandsFour;
+            for (let j = 0; j < winnerHands[winnerHands.length - 1].cardResult.shifts.length; j++) {
+              if (winnerHands[winnerHands.length - 1].cardResult.counts[j] == 4) {
+                winnerHandsFour = winnerHands[winnerHands.length - 1].cardResult.shifts[j];
               }
             }
-            for (let j = 0; j < highestHands[i].shifts.length; j++) {
-              if (highestHands[i].counts[highestHands[i].counts.length - (j + 1)] == 4) {
-                highestHandsHighestPair = highestHands[i].shifts[highestHands[i].shifts.length - (j + 1)]
+            for (let j = 0; j < highestHands[i].cardResult.shifts.length; j++) {
+              if (highestHands[i].cardResult.counts[j] == 4) {
+                highestHandsFour = highestHands[i].cardResult.shifts[j];
               }
             }
             //if highest card is higher than winnerCard or highestHand has pair of ace and winnercard doesnt have pair ace
-            if ((highestHandsHighestPair > winnerHandsHighestPair || highestHandsHighestPair == 0)
-              && winnerHandsHighestPair != 0) {
+            if ((highestHandsFour > winnerHandsFour || highestHandsFour == 0)
+              && winnerHandsFour != 0) {
               winnerHands = [];
               winnerHands.push(highestHands[i]);
               //console.log("winnerHands was smaller: ");
             }
             //If highest hand is equal to winnerhands or both has aces
-            else if ((highestHandsHighestPair == 0 && winnerHandsHighestPair == 0)
-              || (highestHandsHighestPair == winnerHandsHighestPair)) {
+            else if ((highestHandsFour == 0 && winnerHandsFour == 0)
+              || (highestHandsFour == winnerHandsFour)) {
               winnerHands.push(highestHands[i]);
               //console.log("winnerHands was equal: ");
             }
