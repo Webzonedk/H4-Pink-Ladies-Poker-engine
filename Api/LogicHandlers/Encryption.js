@@ -10,23 +10,24 @@ class privateEncryption {
 
   //Encrypting the AES key and IV to be sent back to app in RSA encrypted format.
   EncryptRSA = (publickey) => {
-    const data = { key: this.key, iv: this.iv };
-    
-    let data2 = "hello";
-    
+    const data = Buffer.from(JSON.stringify({ key: this.key, iv: this.iv }),'utf-8')  ;
+   // console.log("size of data: ", data.length);
+    let data2 = "hello to the world";
+   // console.log("size of data 2: ",data2.length);
 
     const encryptedData = crypto.publicEncrypt(
       {
         key: publickey,
-         padding: crypto.constants.RSA_PKCS1_PADDING,
+        padding: crypto.constants.RSA_PKCS1_PADDING,
         // oaepHash: "sha256",
       },
       // Converting the json object to a buffer
       // Buffer.from(JSON.stringify(data2))
-      data2
+      data
     );
 
-    console.log("encypted data: ", encryptedData.toString("base64"));
+    console.log("encypted data: ", encryptedData.toString('base64'));
+   // console.log("encypted data: ", encryptedData);
       //establish websocket connection
       this.WebSocket.GetInstance().InitializeServer();
 

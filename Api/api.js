@@ -32,8 +32,10 @@ app.post("/api/GetAES", (req, res) => {
   const publicKeyFromApp = req.body.publicKey;
   //console.log(publicKeyFromApp);
   const encryptedData = Encryption.GetInstance().EncryptRSA(publicKeyFromApp);
-
-  res.status(200).send(encryptedData);
+  let data = {"data": encryptedData.toString('base64')};
+ // let data = {"data": "hello world"};
+  console.log(data);
+  res.status(200).send(data);
 });
 
 //create new user
