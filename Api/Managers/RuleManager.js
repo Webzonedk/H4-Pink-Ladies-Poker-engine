@@ -8,6 +8,8 @@ class PrivateRuleManager {
   kicker = 0;
   shifts = [];
   counts = [];
+  sortedFaces = [];
+  sortedSuits = [];
 
   constructor() {
     this.FACES = [
@@ -44,7 +46,7 @@ class PrivateRuleManager {
       //console.log("userTempcards: ", userTempcards);
       let userData = {
         tempHand: userTempcards,
-        cardResult: { handName: "", handValue: 0, shift: [], high: 0, low: 0, kick: 0, shifts: [], counts: [] },
+        cardResult: { handName: "", handValue: 0, shift: [], high: 0, low: 0, kick: 0, shifts: [], counts: [], sortedSuits: [] },
       };
       playerHands.push(userData);
 
@@ -211,8 +213,8 @@ class PrivateRuleManager {
                 highestHandsHighestPair = highestHands[i].cardResult.shifts[j];
               }
             }
-            console.log("winnerHandsHighestPair: ", winnerHandsHighestPair);
-            console.log("highestHandsHighestPair: ", highestHandsHighestPair);
+            // console.log("winnerHandsHighestPair: ", winnerHandsHighestPair); //DEBUG
+            // console.log("highestHandsHighestPair: ", highestHandsHighestPair); //DEBUG
             //if highest card is higher than winnerCard or highestHand has pair of ace and winnercard doesnt have pair ace
             if ((highestHandsHighestPair > winnerHandsHighestPair || highestHandsHighestPair == 0)
               && winnerHandsHighestPair != 0) {
@@ -322,63 +324,62 @@ class PrivateRuleManager {
           if (i == 0) {
             winnerHands.push(highestHands[i]);
           }
+          //Checking highestHands for highest card in straight and afterwards
+          // organizing the rest of the straight in an array to compare
           for (let j = 0; j < highestHands[i].cardResult.shifts.length; j++) {
             if (highestHandShiftsArrays.length == 0) {
               highestHandShiftsArrays.push(highestHands[i].cardResult.shifts[j]);
             }
             else if (highestHandShiftsArrays.length < 4
               && highestHands[i].cardResult.shifts[j]
-              > highestHandShiftsArrays[highestHandShiftsArrays.length-1] + 1) {
+              > highestHandShiftsArrays[highestHandShiftsArrays.length - 1] + 1) {
               highestHandShiftsArrays = [];
               highestHandShiftsArrays.push(highestHands[i].cardResult.shifts[j]);
             }
             else if (highestHands[i].cardResult.shifts[j]
-              == highestHandShiftsArrays[highestHandShiftsArrays.length-1] + 1) {
+              == highestHandShiftsArrays[highestHandShiftsArrays.length - 1] + 1) {
               highestHandShiftsArrays.push(highestHands[i].cardResult.shifts[j]);
             }
           }
-          //Checking winnerhands for highest card in straight
+          //Checking winnerhands for highest card in straight and afterwards
+          // organizing the rest of the straight in an array to compare
           for (let j = 0; j < winnerHands[i].cardResult.shifts.length; j++) {
             if (winnerHandShiftsArrays.length == 0) {
               winnerHandShiftsArrays.push(winnerHands[i].cardResult.shifts[j]);
             }
             else if (winnerHandShiftsArrays.length < 4
               && winnerHands[i].cardResult.shifts[j]
-              > winnerHandShiftsArrays[winnerHandShiftsArrays.length-1] + 1) {
+              > winnerHandShiftsArrays[winnerHandShiftsArrays.length - 1] + 1) {
               winnerHandShiftsArrays = [];
               winnerHandShiftsArrays.push(winnerHands[i].cardResult.shifts[j]);
             }
             else if (winnerHands[i].cardResult.shifts[j]
-              == winnerHandShiftsArrays[winnerHandShiftsArrays.length-1] + 1) {
+              == winnerHandShiftsArrays[winnerHandShiftsArrays.length - 1] + 1) {
               winnerHandShiftsArrays.push(winnerHands[i].cardResult.shifts[j]);
             }
           }
-          //Checking if highestHandShiftsArrays contains aces
+          //Checking if highestHandShiftsArrays contains highest straihght
           if (highestHands[0] == 0 && highestHandShiftsArrays[highestHandShiftsArrays.length - 1] == 12) {
-            highestHandStraightKicker = 13
+            highestHandStraightKicker = 13;
           }
           else {
-            highestHandStraightKicker = highestHandShiftsArrays[highestHandShiftsArrays.length - 1]
-            console.log("highestHandShiftsArrays: ", highestHandShiftsArrays);
-            console.log("highestHandStraightKicker: ", highestHandStraightKicker);
+            highestHandStraightKicker = highestHandShiftsArrays[highestHandShiftsArrays.length - 1];
           }
-         
+
+          //Checking if winnerHandShiftsArrays contains highest straihght
           if (winnerHands[0] == 0 && winnerHandShiftsArrays[winnerHandShiftsArrays.length - 1] == 12) {
-            winnerHandStraightKicker = 13
+            winnerHandStraightKicker = 13;
           }
           else {
-            winnerHandStraightKicker = winnerHandShiftsArrays[winnerHandShiftsArrays.length - 1]
-            console.log("winnerHandShiftsArrays: ", winnerHandShiftsArrays);
-            console.log("winnerHandStraightKicker: ", winnerHandStraightKicker);
+            winnerHandStraightKicker = winnerHandShiftsArrays[winnerHandShiftsArrays.length - 1];
           }
-          if (highestHandStraightKicker > winnerHandStraightKicker) { 
+          //Comparing the arrays to find the highest straight
+          if (highestHandStraightKicker > winnerHandStraightKicker) {
             winnerHands = [];
             winnerHands.push(highestHands[i]);
-            //console.log("winnerHands was smaller: ");
           }
           else if (highestHandStraightKicker == winnerHandStraightKicker) {
             winnerHands.push(highestHands[i]);
-            //console.log("winnerHands was equal: ");
           }
 
 
@@ -551,280 +552,313 @@ class PrivateRuleManager {
     // console.log("Analyzing ------------------------------- Analyzing"); //DEBUG
     let faces = hand.map((card) => this.FACES.indexOf(card.slice(0, -1)));
     let suits = hand.map((card) => this.SUITS.indexOf(card.slice(-1)));
+    // console.log("faces: ", faces);
+    // console.log("Suits: ", suits);
+    sortFacesAndSuits(faces, suits);
+
+
+    // function to sort faces and suit to combined array
+    function sortFacesAndSuits(faces, suits) {
+      let tempFace = [];
+      let tempSuits = [];
+
+
+      for (let i = 0; i < faces.length; i++) {
+        let tempFaceModulus = (faces[i] + 1) % 13
+        tempFace.push(tempFaceModulus);
+        tempSuits.push(suits[i]);
+      }
+      for (let i = 0; i < 13; i++) {
+
+        for (let j = 0; j < tempFace.length; j++) {
+          if (tempFace[j] == i) {
+            this.sortedFaces.push(tempFace[j]);
+            this.sortedSuits.push(tempSuits[j]);
+          }
+        }
+
+      }
+
+      console.log("sortedFaces: ", sortedFaces);
+      console.log("sortedSuits: ", sortedSuits);
+
+    }
+  
+
 
     //-------------------------------------------------
     //Method to check if first card is an ace
     //-------------------------------------------------
     function AceSplitter(suits) {
-      // console.log("suits: " + suits);
-      let ace = hand[0];
-      let splittedAce = ace.split("");
-      let indexNumber = suits.findIndex((element) => element == splittedAce[1]);
-      // console.log("splitted index: ", indexNumber);
-      // console.log("splitted value: ", splittedAce[1]);
-      return indexNumber;
-    };
-    //-------------------------------------------------
-    //-------------------------------------------------
+  // console.log("suits: " + suits);
+  let ace = hand[0];
+  let splittedAce = ace.split("");
+  let indexNumber = suits.findIndex((element) => element == splittedAce[1]);
+  // console.log("splitted index: ", indexNumber);
+  // console.log("splitted value: ", splittedAce[1]);
+  return indexNumber;
+};
+//-------------------------------------------------
+//-------------------------------------------------
 
 
 
 
-    //------------------------------------------------
-    //Flush Calculator
-    //------------------------------------------------
-    let suitType;
-    let suitCounts;
-    let flush = flushCalculator();
-    function flushCalculator() {
-      let uniqueSuits = [...new Set(suits)];
-      suitCounts = uniqueSuits.map((suitValue) => [
-        suitValue,
-        suits.filter((suit) => suit === suitValue).length,
-      ]);
-      for (let i = 0; i < suitCounts.length; i++) {
-        if (suitCounts[i][1] >= 5) {
-          //console.log("we got a flush!");
-          suitType = suitCounts[i][0];
+//------------------------------------------------
+//Flush Calculator
+//------------------------------------------------
+let suitType;
+let suitCounts;
+let flush = flushCalculator();
+function flushCalculator() {
+  let uniqueSuits = [...new Set(suits)];
+  suitCounts = uniqueSuits.map((suitValue) => [
+    suitValue,
+    suits.filter((suit) => suit === suitValue).length,
+  ]);
+  for (let i = 0; i < suitCounts.length; i++) {
+    if (suitCounts[i][1] >= 5) {
+      //console.log("we got a flush!");
+      suitType = suitCounts[i][0];
 
-          //console.log("suiteType: ", suitType);
+      //console.log("suiteType: ", suitType);
 
-          //console.log("SuitCountInFlushCalculator: ",suitCounts[i][0]);
-          // console.log("suitcounts: ", suitCounts);
-          return true;
-        }
-      }
-
-      return false;
+      //console.log("SuitCountInFlushCalculator: ",suitCounts[i][0]);
+      // console.log("suitcounts: ", suitCounts);
+      return true;
     }
-    //------------------------------------------------
-    //------------------------------------------------
+  }
 
-    //Counting grouped cards of same faces. Creates a shallow copy of FACES array and grouping by value, from index 0
-    let groups = this.FACES.map((face, i) => faces.filter((j) => i === j).length).sort(
-      (x, y) => y - x
-    );
+  return false;
+}
+//------------------------------------------------
+//------------------------------------------------
 
-
-
-    //calculating straight by first calculating the remainder of the value + 1 divided by 13.
-    let shifted = faces.map((x) => (x + 1) % 13);
-    let shiftedFlusher = faces.map((x) => (x + 1) % 13);
-    // console.log("shifted flusher ", shiftedFlusher); //DEBUG
+//Counting grouped cards of same faces. Creates a shallow copy of FACES array and grouping by value, from index 0
+let groups = this.FACES.map((face, i) => faces.filter((j) => i === j).length).sort(
+  (x, y) => y - x
+);
 
 
-    //-------------------------------------------------
-    //Straight calculator
-    //-------------------------------------------------
-    shifted.sort(function (a, b) {
+
+//calculating straight by first calculating the remainder of the value + 1 divided by 13.
+let shifted = faces.map((x) => (x + 1) % 13);
+let shiftedFlusher = faces.map((x) => (x + 1) % 13);
+//console.log("shifted flusher ", shiftedFlusher); //DEBUG
+
+
+//-------------------------------------------------
+//Straight calculator
+//-------------------------------------------------
+shifted.sort(function (a, b) {
+  return a - b;
+});
+//console.log("ascending order: ", shifted);
+
+let counter = 0;
+for (let i = 0; i < shifted.length; i++) {
+  let currentValue = shifted[i];
+  let nextValue = shifted[i + 1];
+  //console.log("current value ", currentValue);
+  if (i + 1 == shifted.length) {
+    nextValue = shifted[i] + 1;
+  }
+  //resetting counter if value is not following each other
+  if (nextValue > currentValue + 1) {
+    counter = 0;
+
+    //console.log("Resetting counter ", currentValue); //DEBUG
+  }
+  if (nextValue == currentValue + 1) {
+    counter++;
+
+    //console.log("Counting! ", currentValue);
+  }
+}
+
+let highestStraight = false;
+if (shifted[6] == 12 && shifted[0] == 0 && counter >= 4) {
+  highestStraight = true;
+  //then straight
+  //console.log("highest Straight!");
+  //console.log("counter: ", counter);
+}
+
+// let straight = groups[0] === 1 && distance < 5;
+let straight = false;
+straight = (groups[0] > 0 && counter >= 5) || (groups[0] > 0 && highestStraight);
+let aceSuiteTypeLetter;
+//check if Ace has same type as flush
+let sameAceTypeAsFlush = false;
+let aceSuiteType;
+if (highestStraight) {
+  aceSuiteType = AceSplitter(this.SUITS);
+  // console.log("Acesuit type: ", aceSuiteType);
+  // console.log("suit type: ", suitType);
+  // console.log("original suits: ", this.SUITS);
+  aceSuiteTypeLetter = this.SUITS[aceSuiteType];
+  // console.log("-------------------------------This is the type of the ace", aceSuiteTypeLetter);
+  if (this.SUITS[suitType] == aceSuiteTypeLetter) {
+    sameAceTypeAsFlush = true;
+    // console.log("ace type is same as flush: ", sameAceTypeAsFlush);
+  }
+}
+
+//-------------------------------------------------
+//-------------------------------------------------
+
+//-------------------------------------------------
+//Anti Straight Flush calculator
+//-------------------------------------------------
+let isFlushOnly = false;
+if (counter >= 4) {
+  if (flush) {
+    let flushSuit;
+    for (let i = 0; i < suitCounts.length; i++) {
+      if (suitCounts[i][1] >= 5) {
+        flushSuit = suitCounts[i][0];
+      }
+    }
+
+    let suitLetter = this.SUITS[flushSuit];
+    // console.log("suitLetter: ", suitLetter); //DEBUG
+    let shallowCards = [];
+    for (let i = 0; i < hand.length; i++) {
+      let card = hand[i].split("");
+
+      let cardObject = {
+        shifted: shiftedFlusher[i],
+        cardSuit: card[card.length - 1],
+      };
+      shallowCards.push(cardObject);
+    }
+
+    tempArray = [];
+    for (let index = 0; index < shallowCards.length; index++) {
+      if (shallowCards[index].cardSuit == suitLetter) {
+        tempArray.push(shallowCards[index].shifted);
+      }
+    }
+
+    // console.log("temp array length: ", tempArray.length); //DEBUG
+    // console.log("TempArray: before sorting: ", tempArray); //DEBUG
+
+    //Sorting the array ascending
+    tempArray.sort(function (a, b) {
       return a - b;
     });
-    //console.log("ascending order: ", shifted);
 
-    let counter = 0;
-    for (let i = 0; i < shifted.length; i++) {
-      let currentValue = shifted[i];
-      let nextValue = shifted[i + 1];
-      //console.log("current value ", currentValue);
-      if (i + 1 == shifted.length) {
-        nextValue = shifted[i] + 1;
-      }
-      //resetting counter if value is not following each other
-      if (nextValue > currentValue + 1) {
-        counter = 0;
+    // console.log("TempArray: ascending order: ", tempArray); //DEBUG
 
-        //console.log("Resetting counter ", currentValue); //DEBUG
+    let counter1 = 0;
+    for (let i = 0; i < tempArray.length; i++) {
+      let currentValue = tempArray[i];
+      let nextValue = tempArray[i + 1];
+
+      if (i + 1 == tempArray.length) {
+        nextValue = tempArray[i] + 1;
       }
+
       if (nextValue == currentValue + 1) {
-        counter++;
-
-        //console.log("Counting! ", currentValue);
+        counter1++;
       }
     }
+    // console.log("shallowCardsCounter: ", counter1); //DEBUG
 
-    let highestStraight = false;
-    if (shifted[6] == 12 && shifted[0] == 0 && counter >= 4) {
-      highestStraight = true;
-      //then straight
-      //console.log("highest Straight!");
-      //console.log("counter: ", counter);
+
+    if ((counter1 == 4 && !sameAceTypeAsFlush) || counter1 < 4) {
+      isFlushOnly = true;
     }
-
-    // let straight = groups[0] === 1 && distance < 5;
-    let straight = false;
-    straight = (groups[0] > 0 && counter >= 5) || (groups[0] > 0 && highestStraight);
-    let aceSuiteTypeLetter;
-    //check if Ace has same type as flush
-    let sameAceTypeAsFlush = false;
-    let aceSuiteType;
-    if (highestStraight) {
-      aceSuiteType = AceSplitter(this.SUITS);
-      // console.log("Acesuit type: ", aceSuiteType);
-      // console.log("suit type: ", suitType);
-      // console.log("original suits: ", this.SUITS);
-      aceSuiteTypeLetter = this.SUITS[aceSuiteType];
-      // console.log("-------------------------------This is the type of the ace", aceSuiteTypeLetter);
-      if (this.SUITS[suitType] == aceSuiteTypeLetter) {
-        sameAceTypeAsFlush = true;
-        // console.log("ace type is same as flush: ", sameAceTypeAsFlush);
-      }
-    }
-
-    //-------------------------------------------------
-    //-------------------------------------------------
-
-    //-------------------------------------------------
-    //Anti Straight Flush calculator
-    //-------------------------------------------------
-    let isFlushOnly = false;
-    if (counter >= 4) {
-      if (flush) {
-        let flushSuit;
-        for (let i = 0; i < suitCounts.length; i++) {
-          if (suitCounts[i][1] >= 5) {
-            flushSuit = suitCounts[i][0];
-          }
-        }
-
-        let suitLetter = this.SUITS[flushSuit];
-        // console.log("suitLetter: ", suitLetter); //DEBUG
-        let shallowCards = [];
-        for (let i = 0; i < hand.length; i++) {
-          let card = hand[i].split("");
-
-          let cardObject = {
-            shifted: shiftedFlusher[i],
-            cardSuit: card[card.length - 1],
-          };
-          shallowCards.push(cardObject);
-        }
-
-        tempArray = [];
-        for (let index = 0; index < shallowCards.length; index++) {
-          if (shallowCards[index].cardSuit == suitLetter) {
-            tempArray.push(shallowCards[index].shifted);
-          }
-        }
-
-        // console.log("temp array length: ", tempArray.length); //DEBUG
-        // console.log("TempArray: before sorting: ", tempArray); //DEBUG
-
-        //Sorting the array ascending
-        tempArray.sort(function (a, b) {
-          return a - b;
-        });
-
-        // console.log("TempArray: ascending order: ", tempArray); //DEBUG
-
-        let counter1 = 0;
-        for (let i = 0; i < tempArray.length; i++) {
-          let currentValue = tempArray[i];
-          let nextValue = tempArray[i + 1];
-
-          if (i + 1 == tempArray.length) {
-            nextValue = tempArray[i] + 1;
-          }
-
-          if (nextValue == currentValue + 1) {
-            counter1++;
-          }
-        }
-        // console.log("shallowCardsCounter: ", counter1); //DEBUG
-
-
-        if ((counter1 == 4 && !sameAceTypeAsFlush) || counter1 < 4) {
-          isFlushOnly = true;
-        }
-      }
-    }
+  }
+}
 
 
 
-    //-------------------------------------------------
-    //-------------------------------------------------
+//-------------------------------------------------
+//-------------------------------------------------
 
 
-    //-------------------------------------------------
-    //Logging
-    //-------------------------------------------------
+//-------------------------------------------------
+//Logging
+//-------------------------------------------------
 
 
-    //console.log("groups: ", groups);
+//console.log("groups: ", groups);
 
-    // console.log(
-    //   "is it straight: ",
-    //   straight +
-    //   ", flush: " +
-    //   flush +
-    //   ", is ace same: " +
-    //   sameAceTypeAsFlush +
-    //   ", higest straight: " +
-    //   highestStraight +
-    //   ", isFlushOnly: " +
-    //   isFlushOnly
-    // );
+// console.log(
+//   "is it straight: ",
+//   straight +
+//   ", flush: " +
+//   flush +
+//   ", is ace same: " +
+//   sameAceTypeAsFlush +
+//   ", higest straight: " +
+//   highestStraight +
+//   ", isFlushOnly: " +
+//   isFlushOnly
+// );
 
-    // console.log("shifted[0]: ", shifted[0]);
-    // console.log("shifted[1]: ", shifted[1]);
-    // console.log("shifted[2]: ", shifted[2]);
-    // console.log("shifted[3]: ", shifted[3]);
-    // console.log("shifted[4]: ", shifted[4]);
-    // console.log("shifted[5]: ", shifted[5]);
-    // console.log("shifted[6]: ", shifted[6]);
-    // console.log( "-----------------------------------------------------------------------------------"
-    //   //-------------------------------------------------
-    //   //-------------------------------------------------
-    // );
+// console.log("shifted[0]: ", shifted[0]);
+// console.log("shifted[1]: ", shifted[1]);
+// console.log("shifted[2]: ", shifted[2]);
+// console.log("shifted[3]: ", shifted[3]);
+// console.log("shifted[4]: ", shifted[4]);
+// console.log("shifted[5]: ", shifted[5]);
+// console.log("shifted[6]: ", shifted[6]);
+// console.log( "-----------------------------------------------------------------------------------"
+//   //-------------------------------------------------
+//   //-------------------------------------------------
+// );
 
-    //analysing hand, returns string with hand title
-    let result =
-      straight && flush && highestStraight && sameAceTypeAsFlush
-        ? { handName: "Royal-straight-flush", handValue: 10, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts }
-        : straight && flush && !sameAceTypeAsFlush && !isFlushOnly
-          ? { handName: "straight-flush", handValue: 9, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts }
-          : groups[0] === 4
-            ? { handName: "four-of-a-kind", handValue: 8, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts }
-            : groups[0] === 3 && groups[1] === 2
-              ? { handName: "full-house", handValue: 7, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts }
-              : flush && isFlushOnly
-                ? { handName: "flush", handValue: 6, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts }
-                : straight || highestStraight
-                  ? { handName: "straight", handValue: 5, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts }
-                  : groups[0] === 3
-                    ? { handName: "three-of-a-kind", handValue: 4, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts }
-                    : groups[0] === 2 && groups[1] === 2
-                      ? { handName: "two-pair", handValue: 3, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts }
-                      : groups[0] === 2
-                        ? { handName: "one-pair", handValue: 2, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts }
-                        : { handName: "high-card", handValue: 1, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts };
+//analysing hand, returns string with hand title
+let result =
+  straight && flush && highestStraight && sameAceTypeAsFlush
+    ? { handName: "Royal-straight-flush", handValue: 10, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedSuits: this.sortedSuits }
+    : straight && flush && !sameAceTypeAsFlush && !isFlushOnly
+      ? { handName: "straight-flush", handValue: 9, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedSuits: this.sortedSuits }
+      : groups[0] === 4
+        ? { handName: "four-of-a-kind", handValue: 8, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedSuits: this.sortedSuits }
+        : groups[0] === 3 && groups[1] === 2
+          ? { handName: "full-house", handValue: 7, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedSuits: this.sortedSuits }
+          : flush && isFlushOnly
+            ? { handName: "flush", handValue: 6, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedSuits: this.sortedSuits }
+            : straight || highestStraight
+              ? { handName: "straight", handValue: 5, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedSuits: this.sortedSuits }
+              : groups[0] === 3
+                ? { handName: "three-of-a-kind", handValue: 4, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedSuits: this.sortedSuits }
+                : groups[0] === 2 && groups[1] === 2
+                  ? { handName: "two-pair", handValue: 3, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedSuits: this.sortedSuits }
+                  : groups[0] === 2
+                    ? { handName: "one-pair", handValue: 2, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedSuits: this.sortedSuits }
+                    : { handName: "high-card", handValue: 1, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedSuits: this.sortedSuits };
 
-    // console.log("result: ",result);
-    return result;
+// console.log("result: ",result);
+return result;
 
   };
-  //Counting groups in shifted to count instance of each faces
-  CountShifted = (shifted) => {
-    this.shifts = [];
-    this.counts = [];
-    let previousIndex = 0;
-    for (let index of shifted) {
-      if (index !== previousIndex) {
-        this.shifts.push(index);
-        this.counts.push(1);
-        previousIndex = index;
-        // console.log("previousIndex: ",previousIndex); //DEBUG
-        // console.log("index: ",index); //DEBUG
-      }
-      else {
-        this.counts[this.counts.length - 1]++;
-        previousIndex = index;
-      }
+//Counting groups in shifted to count instance of each faces
+CountShifted = (shifted) => {
+  this.shifts = [];
+  this.counts = [];
+  let previousIndex = 0;
+  for (let index of shifted) {
+    if (index !== previousIndex) {
+      this.shifts.push(index);
+      this.counts.push(1);
+      previousIndex = index;
+      // console.log("previousIndex: ",previousIndex); //DEBUG
+      // console.log("index: ",index); //DEBUG
     }
-    // console.log("CountShifted Shifts: ", shifted); //DEBUG
-    console.log("CountShifted-counts: ", this.shifts, this.counts); //DEBUG
-
-    return [this.shifts, this.counts];//Fields
+    else {
+      this.counts[this.counts.length - 1]++;
+      previousIndex = index;
+    }
   }
+  // console.log("CountShifted Shifts: ", shifted); //DEBUG
+  console.log("CountShifted-counts: ", this.shifts, this.counts); //DEBUG
+
+  return [this.shifts, this.counts];//Fields
+}
 
 
 
