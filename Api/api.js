@@ -23,9 +23,8 @@ app.use(cors());
 Encryption.GetInstance().CreateAES();
 //Websocket.GetInstance().InitializeServer();
 // only for testing puposes.
-const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
-  modulusLength: 2048,
-});
+const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", { modulusLength: 2048 });
+
 
 //Get AES keys
 app.post("/api/GetAES", (req, res) => {
@@ -39,7 +38,7 @@ app.post("/api/GetAES", (req, res) => {
 });
 
 //create new user
-app.post("/api/CreateUser", (req, res) => {
+app.post("/api/CreateUser", (req,  res) => {
   //test encrypted user
   const userName = req.body.data;
 
@@ -50,6 +49,7 @@ app.post("/api/CreateUser", (req, res) => {
   const lobbySingleton = Lobby.GetInstance();
   lobbySingleton.CreateUser(decryptedUser);
 
+  console.log("users: ", lobbySingleton.pokerTables[0].users.length);
   console.log("users: ", lobbySingleton.pokerTables[0].users.length);
 
   res.status(200).send("user created!");
@@ -80,12 +80,20 @@ app.post("/api/PlayAgain", (req, res) => {
 });
 
 //leave poker table
-app.post("/api/LeaveTable", (req, res) => {
+
+  // const encryptedUserID = req.body.userID;
+  // const decryptedUserID = encryption.DecryptAES(encryptedUserID);
+app.post('/api/LeaveTable', (req, res) => {
+
   //test encrypted user
   const user = req.body;
   //console.log(user);
   const encrypted = Encryption.GetInstance().EncryptAES(user);
   const decryptedUserID = Encryption.GetInstance().DecryptAES(encrypted);
+
+
+
+
 
   // const encryptedUserID = req.body.userID;
   // const decryptedUserID = encryption.DecryptAES(encryptedUserID);
@@ -98,6 +106,8 @@ app.post("/api/LeaveTable", (req, res) => {
 
   //execute method to remove user from table
 
+  //pokerTableSingleton.LeavePokerTable(decryptedUserID);
+  console.log("waiting users: ", Lobby.GetInstance().waitingUsers);
   //pokerTableSingleton.LeavePokerTable(decryptedUserID);
   console.log("waiting users: ", Lobby.GetInstance().waitingUsers);
   res.status(200).send("replay!");
@@ -118,7 +128,7 @@ app.get("/api/testCardDeck", (req, res) => {
 
 //test rulemanager
 app.get("/api/ruleManagerTest", (req, res) => {
-  const ruleManager = RuleManager.GetInstance();
+   const ruleManager = RuleManager.GetInstance();
   //const PokerTable = require('./LogicHandlers/PokerTable');
   //const User = require('./Models/User');
 
@@ -145,11 +155,15 @@ app.get("/api/ruleManagerTest", (req, res) => {
   //-----------------------------------------------
   //Creating a testPokerTable object
   //-----------------------------------------------
-  //let testPocketCards = [["3D", "7H"],["3D", "8H"]]; //high card
-  let testPocketCards = [
-    ["10D", "7H"],
-    ["kS", "6S"],
-  ]; //one pair
+  // let testPocketCards = [["3D", "7H"],["3D", "8H"]]; //high card
+  // let testPocketCards = [["2S", "5D"],["10D", "7H"]]; //1 pair
+  // let testPocketCards = [["10D", "5H"], ["kS", "10S"]]; //2 pair
+  // let testPocketCards = [["10D", "10H"], ["jD", "jS"]]; //3 of a kind
+  let testPocketCards = [["4D", "8H"], ["kD", "4S"]]; //straight
+  // let testPocketCards = [["4C", "8H"], ["7C", "4S"]]; //flush
+  // let testPocketCards = [["jD", "10S"], ["kD", "10H"]]; //full house
+  // let testPocketCards = [["10D", "10H"], ["jD", "jS"]]; //4 of a kind
+  // let testPocketCards = [["4C", "8C"], ["kC", "4S"]]; //straight flush
   //let testPocketCards = [["3D", "7H"], ["5D", "6S"], ["5S", "jS"]]; //one pair * 2
   //let testPocketCards = [["3D", "7H"], ["5S", "6S"], ["5D", "jS"], ["10D", "10S"], ["2S", "9S"], ["aD", "8D"]]; //With two straights high and low
   // testPocketCards=[["1x card"], ["1 x pair"], ["2 x pair"], ["3 x kind "], ["straight"], ["flush   "], ["full hou"], ["4 x kind  "], ["str flu"],["royal flu"]]
@@ -169,9 +183,16 @@ app.get("/api/ruleManagerTest", (req, res) => {
     //add test users to poker table
     pokerTable.users.push(user);
   }
-  // pokerTable.collectiveCards=["10C", "jC", "qC", "kC", "8H"];
-  pokerTable.collectiveCards = ["10C", "jC", "qC", "kC", "5H"];
-  console.log("Pokertable: " + pokerTable);
+  // pokerTable.collectiveCards=["10C", "jC", "qC", "kC", "8H"]; //straight flush and royal straight flush test
+  // pokerTable.collectiveCards=["10C", "jC", "qC", "9C", "8H"]; //straight flush
+  pokerTable.collectiveCards = ["10C", "jC", "qC", "5C", "9H"]; //straight and flush, 
+  // pokerTable.collectiveCards = ["10C", "10D", "jK", "jC", "kH"]; //Full house
+  // pokerTable.collectiveCards = ["10C", "7C", "8C", "jC", "5H"]; //3 of a kind
+  // pokerTable.collectiveCards = ["10C", "10S", "jH", "jC", "5H"]; //4 of a kind
+  // pokerTable.collectiveCards = ["10C", "jC", "qC", "kC", "5H"]; // 1 x pair, 2 pairs,
+  // pokerTable.collectiveCards = ["10C", "jC", "4C", "9C", "5H"]; //high card
+
+  //console.log("Pokertable: " + pokerTable); //DEBUG
   //-----------------------------------------------
   //-----------------------------------------------
 
@@ -195,6 +216,7 @@ app.post("/api/sendMessage",(req, res) => {
 app.post("/api/cleaningLady", (req, res) => {
   const lobby = require("./LogicHandlers/Lobby").Lobby;
   //const User = require('./Models/User');
+  // let pokerTable = new PokerTable();
   // let pokerTable = new PokerTable();
   let singleton = lobby.GetInstance();
   // //create test users
@@ -225,6 +247,9 @@ app.post("/api/cleaningLady", (req, res) => {
   }
 
   res.status(200).send("users kicked!");
+
+  res.status(200).send("users kicked!");
+
 });
 
 //initialize websocket
