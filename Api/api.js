@@ -21,7 +21,7 @@ app.use(cors());
 
 //create AES keys when api is starting, before anything else, to ensure that AES key and IV exists.
 Encryption.GetInstance().CreateAES();
-
+//Websocket.GetInstance().InitializeServer();
 // only for testing puposes.
 const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
   modulusLength: 2048,
@@ -41,11 +41,12 @@ app.post("/api/GetAES", (req, res) => {
 //create new user
 app.post("/api/CreateUser", (req, res) => {
   //test encrypted user
-  const userName = req.body.userName;
-  const encrypted = Encryption.GetInstance().EncryptAES(userName);
+  const userName = req.body.data;
 
-  const decryptedUser = Encryption.GetInstance().DecryptAES(encrypted);
-
+  console.log(userName);
+ // let encryptedBytes = Buffer.from(userName,'base64');
+  const decryptedUser = Encryption.GetInstance().DecryptAES(userName);
+  
   const lobbySingleton = Lobby.GetInstance();
   lobbySingleton.CreateUser(decryptedUser);
 
@@ -57,12 +58,8 @@ app.post("/api/CreateUser", (req, res) => {
 //user interactions
 app.post("/api/Useraction", (req, res) => {
   const encryptedUserAction = req.body;
-  //test encryption
-  const encrypted = Encryption.GetInstance().EncryptAES(encryptedUserAction);
-
-
-
-  const decryptedUserAction = Encryption.GetInstance().DecryptAES(encrypted);
+  
+  const decryptedUserAction = Encryption.GetInstance().DecryptAES(encryptedUserAction);
   console.log(decryptedUserAction);
   Lobby.GetInstance().pokerTables[decryptedUserAction.tableID].UpdateUserState(decryptedUserAction.id,decryptedUserAction.action, decryptedUserAction.value);
  
@@ -74,10 +71,10 @@ app.post("/api/Useraction", (req, res) => {
 
 // play game again
 app.post("/api/PlayAgain", (req, res) => {
-  const encryptedUserID = req.body.userID;
+  const encryptedUserID = req.body;
 
   const decryptedUserID = encryption.DecryptAES(encryptedUserID);
-  pokerTable.AddToPokerTable(decryptedUserID);
+  pokerTable.AddToPokerTable(decryptedUserID.userID);
 
   res.status(200).send("replay!");
 });

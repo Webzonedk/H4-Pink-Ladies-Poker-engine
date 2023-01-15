@@ -10,10 +10,8 @@ class privateEncryption {
 
   //Encrypting the AES key and IV to be sent back to app in RSA encrypted format.
   EncryptRSA = (publickey) => {
-    const data = Buffer.from(JSON.stringify({ key: this.key, iv: this.iv }),'utf-8')  ;
-   // console.log("size of data: ", data.length);
-    let data2 = "hello to the world";
-   // console.log("size of data 2: ",data2.length);
+    const data = Buffer.from(JSON.stringify({ key: this.key.toString('base64'), iv: this.iv.toString('base64') }),'utf-8')  ;
+   
 
     const encryptedData = crypto.publicEncrypt(
       {
@@ -21,8 +19,6 @@ class privateEncryption {
         padding: crypto.constants.RSA_PKCS1_PADDING,
         // oaepHash: "sha256",
       },
-      // Converting the json object to a buffer
-      // Buffer.from(JSON.stringify(data2))
       data
     );
 
@@ -53,19 +49,21 @@ class privateEncryption {
     encryptedData = Buffer.concat([encryptedData, cipher.final()]);
 
     //send to websocket
-    this.WebSocket.GetInstance().SendMessage(encryptedData);
+    
+    this.WebSocket.GetInstance().SendMessage(encryptedData.toString('base64'));
 
-    console.log("encrypted data: ", encryptedData.toString("hex"));
+   // console.log("encrypted data: ", encryptedData.toString("hex"));
     return encryptedData;
   };
 
   DecryptAES = (dataToDecrypt) => {
     console.log(dataToDecrypt);
-    //let iv= Buffer.from(iv, 'hex');
-    let encryptedText = Buffer.from(dataToDecrypt, "hex");
+    let encryptedBytes = Buffer.from(dataToDecrypt,'base64');
+    let encryptedText = Buffer.from(encryptedBytes, "hex");
     let decipher = crypto.createDecipheriv(this.algorithm, this.key, this.iv);
     let decryptedData = decipher.update(encryptedText, "hex", "utf-8");
     decryptedData += decipher.final("utf8");
+    console.log(decryptedData);
     return JSON.parse(decryptedData);
   };
 }

@@ -78,6 +78,10 @@ class PokerTable {
             this.round++;
 
 
+             //send snapshot
+             let snapshot = this.CreateSnapshot();
+             this.Encryption.GetInstance().EncryptAES(snapshot);
+
             //activate check for players that no longer is playable
             let kickLoop = setInterval(() => {
               this.VerifyOrKickPlayer();
@@ -212,7 +216,7 @@ class PokerTable {
                     this.ClearCurrentInterval(turnChanger);
                   }
                 }
-              }, 30000);
+              }, 5000);
             }
 
 
