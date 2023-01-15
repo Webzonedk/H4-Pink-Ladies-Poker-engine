@@ -45,19 +45,20 @@ class PrivateRuleManager {
       //console.log("userTempcards: ", userTempcards);
       let userData = {
         tempHand: userTempcards,
-        cardResult: { handName: "", handValue: 0, shift: [], high: 0, low: 0, kick: 0, shifts: [], counts: [], sortedSuits: [] },
+        cardResult: { handName: "", handValue: 0, shift: [], high: 0, low: 0, kick: 0, shifts: [], counts: [], sortedFaces: [], sortedSuits: [], suitType: 0 },
       };
       playerHands.push(userData);
 
       // console.log("user hands: ", userData.tempHand); //DEBUG
     }
 
+    //  console.log("playerHands.length: ", playerHands.length);
     for (let i = 0; i < playerHands.length; i++) {
       // console.log("temp hands: ", playerHands[i].tempHand);
       let result = this.AnalyzeHand(playerHands[i].tempHand);
       playerHands[i].cardResult = result;
 
-      // console.log("cardresult: ", playerHands[i].cardResult);
+      //console.log("cardresult: ", playerHands[i].cardResult);
     }
 
 
@@ -140,7 +141,7 @@ class PrivateRuleManager {
 
         case 1: //Highest card
           if (i == 0) {
-            console.log("i: ", i);
+            //console.log("i: ", i);
             winnerHands.push(highestHands[i]);
             // console.log("winnerhands 1 length: ", winnerHands.length); //DEBUG
           }
@@ -323,72 +324,136 @@ class PrivateRuleManager {
           if (i == 0) {
             winnerHands.push(highestHands[i]);
           }
-          //Checking highestHands for highest card in straight and afterwards
-          // organizing the rest of the straight in an array to compare
-          for (let j = 0; j < highestHands[i].cardResult.shifts.length; j++) {
-            if (highestHandShiftsArrays.length == 0) {
-              highestHandShiftsArrays.push(highestHands[i].cardResult.shifts[j]);
-            }
-            else if (highestHandShiftsArrays.length < 4
-              && highestHands[i].cardResult.shifts[j]
-              > highestHandShiftsArrays[highestHandShiftsArrays.length - 1] + 1) {
-              highestHandShiftsArrays = [];
-              highestHandShiftsArrays.push(highestHands[i].cardResult.shifts[j]);
-            }
-            else if (highestHands[i].cardResult.shifts[j]
-              == highestHandShiftsArrays[highestHandShiftsArrays.length - 1] + 1) {
-              highestHandShiftsArrays.push(highestHands[i].cardResult.shifts[j]);
-            }
-          }
-          //Checking winnerhands for highest card in straight and afterwards
-          // organizing the rest of the straight in an array to compare
-          for (let j = 0; j < winnerHands[i].cardResult.shifts.length; j++) {
-            if (winnerHandShiftsArrays.length == 0) {
-              winnerHandShiftsArrays.push(winnerHands[i].cardResult.shifts[j]);
-            }
-            else if (winnerHandShiftsArrays.length < 4
-              && winnerHands[i].cardResult.shifts[j]
-              > winnerHandShiftsArrays[winnerHandShiftsArrays.length - 1] + 1) {
-              winnerHandShiftsArrays = [];
-              winnerHandShiftsArrays.push(winnerHands[i].cardResult.shifts[j]);
-            }
-            else if (winnerHands[i].cardResult.shifts[j]
-              == winnerHandShiftsArrays[winnerHandShiftsArrays.length - 1] + 1) {
-              winnerHandShiftsArrays.push(winnerHands[i].cardResult.shifts[j]);
-            }
-          }
-          //Checking if highestHandShiftsArrays contains highest straihght
-          if (highestHands[0] == 0 && highestHandShiftsArrays[highestHandShiftsArrays.length - 1] == 12) {
-            highestHandStraightKicker = 13;
-          }
           else {
-            highestHandStraightKicker = highestHandShiftsArrays[highestHandShiftsArrays.length - 1];
+
+
+            //Checking highestHands for highest card in straight and afterwards
+            // organizing the rest of the straight in an array to compare
+            for (let j = 0; j < highestHands[i].cardResult.shifts.length; j++) {
+              if (highestHandShiftsArrays.length == 0) {
+                highestHandShiftsArrays.push(highestHands[i].cardResult.shifts[j]);
+              }
+              else if (highestHandShiftsArrays.length < 4
+                && highestHands[i].cardResult.shifts[j]
+                > highestHandShiftsArrays[highestHandShiftsArrays.length - 1] + 1) {
+                highestHandShiftsArrays = [];
+                highestHandShiftsArrays.push(highestHands[i].cardResult.shifts[j]);
+              }
+              else if (highestHands[i].cardResult.shifts[j]
+                == highestHandShiftsArrays[highestHandShiftsArrays.length - 1] + 1) {
+                highestHandShiftsArrays.push(highestHands[i].cardResult.shifts[j]);
+              }
+            }
+            //Checking winnerhands for highest card in straight and afterwards
+            // organizing the rest of the straight in an array to compare
+            for (let j = 0; j < winnerHands[i].cardResult.shifts.length; j++) {
+              if (winnerHandShiftsArrays.length == 0) {
+                winnerHandShiftsArrays.push(winnerHands[i].cardResult.shifts[j]);
+              }
+              else if (winnerHandShiftsArrays.length < 4
+                && winnerHands[i].cardResult.shifts[j]
+                > winnerHandShiftsArrays[winnerHandShiftsArrays.length - 1] + 1) {
+                winnerHandShiftsArrays = [];
+                winnerHandShiftsArrays.push(winnerHands[i].cardResult.shifts[j]);
+              }
+              else if (winnerHands[i].cardResult.shifts[j]
+                == winnerHandShiftsArrays[winnerHandShiftsArrays.length - 1] + 1) {
+                winnerHandShiftsArrays.push(winnerHands[i].cardResult.shifts[j]);
+              }
+            }
+            //Checking if highestHandShiftsArrays contains highest straihght
+            if (highestHands[0] == 0 && highestHandShiftsArrays[highestHandShiftsArrays.length - 1] == 12) {
+              highestHandStraightKicker = 13;
+            }
+            else {
+              highestHandStraightKicker = highestHandShiftsArrays[highestHandShiftsArrays.length - 1];
+            }
+
+            //Checking if winnerHandShiftsArrays contains highest straihght
+            if (winnerHands[0] == 0 && winnerHandShiftsArrays[winnerHandShiftsArrays.length - 1] == 12) {
+              winnerHandStraightKicker = 13;
+            }
+            else {
+              winnerHandStraightKicker = winnerHandShiftsArrays[winnerHandShiftsArrays.length - 1];
+            }
+            //Comparing the arrays to find the highest straight
+            if (highestHandStraightKicker > winnerHandStraightKicker) {
+              winnerHands = [];
+              winnerHands.push(highestHands[i]);
+            }
+            else if (highestHandStraightKicker == winnerHandStraightKicker) {
+              winnerHands.push(highestHands[i]);
+            }
           }
 
-          //Checking if winnerHandShiftsArrays contains highest straihght
-          if (winnerHands[0] == 0 && winnerHandShiftsArrays[winnerHandShiftsArrays.length - 1] == 12) {
-            winnerHandStraightKicker = 13;
-          }
-          else {
-            winnerHandStraightKicker = winnerHandShiftsArrays[winnerHandShiftsArrays.length - 1];
-          }
-          //Comparing the arrays to find the highest straight
-          if (highestHandStraightKicker > winnerHandStraightKicker) {
-            winnerHands = [];
-            winnerHands.push(highestHands[i]);
-          }
-          else if (highestHandStraightKicker == winnerHandStraightKicker) {
-            winnerHands.push(highestHands[i]);
-          }
 
-
-
-
-
-          //Checking if winnerHandShiftsArrays contains aces
 
           break;
         case 6: //flush
+          if (i == 0) {
+            winnerHands.push(highestHands[i]);
+          }
+          else {
+            let highestHandsFlushFacesArray = [];
+            let winnerHandsFlushFacesArray = [];
+            let counting = 0;
+            //Counting faces and adding them to array
+            for (let j = 0; j < highestHands[i].cardResult.sortedFaces.length; j++) {
+              if (highestHands[i].cardResult.sortedSuits[j]
+                == highestHands[i].cardResult.suitType) {
+                highestHandsFlushFacesArray.push(highestHands[i].cardResult.sortedFaces[j]);
+              }
+            }
+            for (let j = 0; j < winnerHands[winnerHands.length - 1].cardResult.sortedFaces.length; j++) {
+              if (winnerHands[winnerHands.length - 1].cardResult.sortedSuits[j]
+                == winnerHands[winnerHands.length - 1].cardResult.suitType) {
+                winnerHandsFlushFacesArray.push(winnerHands[winnerHands.length - 1].cardResult.sortedFaces[j]);
+              }
+            }
+            // console.log("highestHands.cardResult.shifts: ", highestHands[i].cardResult.sortedFaces);
+            // console.log("highestHandsFlushFacesArray: ", highestHandsFlushFacesArray);
+            // console.log("winnerHandsFlushFacesArray: ", winnerHandsFlushFacesArray);
+
+
+            // checking arrays if the highest hands has a higher or equal flush than current winnerhand,
+            // and changing or adding more hands if nessesary.
+            if (highestHandsFlushFacesArray[0] == 0 && winnerHandsFlushFacesArray[0] == 0) {
+              for (let j = 0; j < winnerHandsFlushFacesArray.length; j++) {
+                if (highestHandsFlushFacesArray[highestHandsFlushFacesArray.length - (1 + j)]
+                  > winnerHandsFlushFacesArray[winnerHandsFlushFacesArray.length - (1 + j)]) {
+                  winnerHands = [];
+                  winnerHands.push(highestHands[i]);
+                }
+                else if (highestHandsFlushFacesArray[highestHandsFlushFacesArray.length - (1 + j)]
+                  == winnerHandsFlushFacesArray[winnerHandsFlushFacesArray.length - (1 + j)]) {
+                  counting++;
+                  if (counting == 4) {
+                    winnerHands.push(highestHands[i]);
+                  }
+                }
+              }
+            }
+            else if (highestHandsFlushFacesArray[0] == 0 && winnerHandsFlushFacesArray[0] != 0) {
+              winnerHands = [];
+              winnerHands.push(highestHands[i]);
+            }
+            else {
+              for (let j = 0; j < winnerHandsFlushFacesArray.length; j++) {
+                if (highestHandsFlushFacesArray[highestHandsFlushFacesArray.length - (1 + j)]
+                  > winnerHandsFlushFacesArray[winnerHandsFlushFacesArray.length - (1 + j)]) {
+                  winnerHands = [];
+                  winnerHands.push(highestHands[i]);
+                }
+                else if (highestHandsFlushFacesArray[highestHandsFlushFacesArray.length - (1 + j)]
+                  == winnerHandsFlushFacesArray[winnerHandsFlushFacesArray.length - (1 + j)]) {
+                  counting++;
+                  if (counting == 5) {
+                    winnerHands.push(highestHands[i]);
+                  }
+                }
+              }
+            }
+          }
 
           break;
         case 7: //full-house
@@ -484,9 +549,110 @@ class PrivateRuleManager {
             }
           }
           break;
-        case 9: //stright flush
+        case 9: //straight flush
+          let highestHandsFlushFacesArray = [];
+          let winnerHandsFlushFacesArray = [];
+          let highestHandsStrightFlushArray = [];
+          let winnerHandsStraightFlushArray = [];
+          let highestHandsStrightFlushKicker;
+          let winnerHandsStraightFlushKicker;
+          let counting = 0;
+          if (i == 0) {
+            winnerHands.push(highestHands[i]);
+            console.log("i: ", i);
+          }
+          else {
+            console.log("i: ", i);
+            //Counting faces and adding them to array
+            for (let j = 0; j < highestHands[i].cardResult.sortedFaces.length; j++) {
+              if (highestHands[i].cardResult.sortedSuits[j]
+                == highestHands[i].cardResult.suitType) {
+                highestHandsFlushFacesArray.push(highestHands[i].cardResult.sortedFaces[j]);
+              }
+            }
+            for (let j = 0; j < winnerHands[winnerHands.length - 1].cardResult.sortedFaces.length; j++) {
+              if (winnerHands[winnerHands.length - 1].cardResult.sortedSuits[j]
+                == winnerHands[winnerHands.length - 1].cardResult.suitType) {
+                winnerHandsFlushFacesArray.push(winnerHands[winnerHands.length - 1].cardResult.sortedFaces[j]);
+              }
+            }
+            console.log("highestHands[i].cardResult.sortedFaces: ", highestHands[i].cardResult.sortedFaces);
+            console.log("highestHands[i].cardResult.sortedSuits: ", highestHands[i].cardResult.sortedSuits);
+            console.log("highestHandsFlushFacesArray: ", highestHandsFlushFacesArray.length);
+            console.log("winnerHandsFlushFacesArray: ", winnerHandsFlushFacesArray.length);
+
+            //Checking highestHandsFlushFacesArray for highest card in straight and afterwards
+            // organizing the rest of the straight in an array to compare
+            for (let j = 0; j < highestHandsFlushFacesArray.length; j++) {
+              if (highestHandsStrightFlushArray.length == 0) {
+                highestHandsStrightFlushArray.push(highestHandsFlushFacesArray[j]);
+              }
+              else if (highestHandsStrightFlushArray.length < 4
+                && highestHandsFlushFacesArray[j]
+                > highestHandsStrightFlushArray[highestHandsStrightFlushArray.length - 1] + 1) {
+                highestHandsStrightFlushArray = [];
+                highestHandsStrightFlushArray.push(highestHandsFlushFacesArray[j]);
+              }
+              else if (highestHandsFlushFacesArray[j]
+                == highestHandsStrightFlushArray[highestHandsStrightFlushArray.length - 1] + 1) {
+                highestHandsStrightFlushArray.push(highestHandsFlushFacesArray[j]);
+              }
+            }
+
+            //Checking winnerhands for highest card in straight and afterwards
+            // organizing the rest of the straight in an array to compare
+            for (let j = 0; j < winnerHandsFlushFacesArray.length; j++) {
+              if (winnerHandsStraightFlushArray.length == 0) {
+                winnerHandsStraightFlushArray.push(winnerHandsFlushFacesArray[j]);
+              }
+              else if (winnerHandsStraightFlushArray.length < 4
+                && winnerHandsFlushFacesArray[j]
+                > winnerHandsStraightFlushArray[winnerHandsStraightFlushArray.length - 1] + 1) {
+                winnerHandsStraightFlushArray = [];
+                winnerHandsStraightFlushArray.push(winnerHandsFlushFacesArray[j]);
+              }
+              else if (winnerHandsFlushFacesArray[j]
+                == winnerHandsStraightFlushArray[winnerHandsStraightFlushArray.length - 1] + 1) {
+                winnerHandsStraightFlushArray.push(winnerHandsFlushFacesArray[j]);
+              }
+            }
+          }
+          // console.log("highestHands[i].cardResult.sortedFaces: ", highestHands[i].cardResult.sortedFaces);
+          // console.log("highestHandsFlushFacesArray: ", highestHandsFlushFacesArray);
+          // console.log("winnerHandsFlushFacesArray: ", winnerHandsFlushFacesArray);
+          console.log("highestHandsStrightFlushArray: ", highestHandsStrightFlushArray);
+          console.log("winnerHandsStraightFlushArray: ", winnerHandsStraightFlushArray);
+          console.log("highestHandsStrightFlushKicker: ", highestHandsStrightFlushKicker);
+          console.log("winnerHandsStraightFlushKicker: ", winnerHandsStraightFlushKicker);
+
+          // //Checking if highestHandShiftsArrays contains highest straihght
+          // if (highestHands[0] == 0 && highestHandShiftsArrays[highestHandShiftsArrays.length - 1] == 12) {
+          //   highestHandStraightKicker = 13;
+          // }
+          // else {
+          //   highestHandStraightKicker = highestHandShiftsArrays[highestHandShiftsArrays.length - 1];
+          // }
+
+          // //Checking if winnerHandShiftsArrays contains highest straihght
+          // if (winnerHands[0] == 0 && winnerHandShiftsArrays[winnerHandShiftsArrays.length - 1] == 12) {
+          //   winnerHandStraightKicker = 13;
+          // }
+          // else {
+          //   winnerHandStraightKicker = winnerHandShiftsArrays[winnerHandShiftsArrays.length - 1];
+          // }
+          // //Comparing the arrays to find the highest straight
+          // if (highestHandStraightKicker > winnerHandStraightKicker) {
+          //   winnerHands = [];
+          //   winnerHands.push(highestHands[i]);
+          // }
+          // else if (highestHandStraightKicker == winnerHandStraightKicker) {
+          //   winnerHands.push(highestHands[i]);
+          // }
+
+
 
           break;
+
         default://Royal stright flush
           winnerHands.push(highestHands[i]);
           break;
@@ -495,42 +661,6 @@ class PrivateRuleManager {
     }
 
 
-
-    // //Comparing highest hands in winner hands where kicker is 1 card
-    // realWinnerHands = [...winnerHands]
-    // for (let i = 1; i < winnerHands.length; i++) {
-    //   for (let j = 0; j < array.length; j++) {
-    //     if (winnerHands[i].counts[j] = 1) {
-    //       if (i == 0) {
-    //         realWinnerHands.push(winnerHands[i]);
-    //       }
-    //       else if (winnerHands[i].shifts[0] == 0 && realWinnerHands[realWinnerHands.length - 1].shifts[0] != 0) {
-    //         realWinnerHands = [];
-    //         realWinnerHands.push(winnerHands[i]);
-    //       }
-
-
-
-    //     }
-
-    //   }
-    //   if (winnerHands[i].shifts[0] == 0 && realWinnerHands[realWinnerHands.length - 1].shifts[0] == 0) {
-
-    //     for (let j = 0; j < winnerHands[i].shifts.length; j++) {
-    //       if (winnerHands[i].shifts[winnerHands[i].shifts.length - (j + 1)]
-    //         > realWinnerHands[realWinnerHands.length - 1].shifts[winnerHands[i].shifts.length - (j + 1)]) {
-    //         realWinnerHands = [];
-    //         realWinnerHands.push(winnerHands[i]);
-    //         j = winnerHands[i].shifts.length;
-    //       }
-    //       else if (winnerHands[i].shifts[winnerHands[i].shifts.length - (j + 1)]
-    //         == realWinnerHands[realWinnerHands.length - 1].shifts[winnerHands[i].shifts.length - (j + 1)]) {
-    //         realWinnerHands.push(winnerHands[i]);
-    //         j = winnerHands[i].shifts.length;
-    //       }
-    //     }
-    //   }
-    // }
     console.log("all winnerHands: ", winnerHands);
     //console.log("all realWinnerHands: ", realWinnerHands);
     // console.log("winnerHands shifts: ", winnerHands[0].shifts);
@@ -553,7 +683,7 @@ class PrivateRuleManager {
     let suits = hand.map((card) => this.SUITS.indexOf(card.slice(-1)));
     // console.log("faces: ", faces);
     // console.log("Suits: ", suits);
-    
+
 
 
     //sort faces and suit to combined array
@@ -582,7 +712,36 @@ class PrivateRuleManager {
     console.log("sortedSuits: ", sortedSuits);
 
 
+    //------------------------------------------------
+    //straight flush calculator
+    //------------------------------------------------
+    let straightFlush = false;
+    let sfArray = [];
+    let sfCounter = 0;
+    sfArray.push(sortedFaces[sortedFaces.length - 1]);
+    for (let i = 0; i < sortedFaces.length - 1; i++) {
+      if (sortedFaces[i] == sortedFaces[i + 1] - 1 && sortedSuits[i] == sortedSuits[i + 1]) {
+        sfCounter++
+      }
+      else if ((sortedFaces[i] != sortedFaces[i + 1] - 1 || sortedSuits[i] != sortedSuits[i + 1]) && sfCounter < 3) {
+        sfCounter = 0;
+        sfCounter++
+      }
+      if (sfCounter >= 5) {
+        if (sortedFaces[sortedFaces.length - 1] == 12) {
+          if (sortedFaces[0] != 0) {
+            straightFlush = true;
+          }
+          else { straightFlush = false; }
+        }
+        else {
+          straightFlush = true;
 
+        }
+        
+      }
+    }
+    console.log("straightFlush: ", straightFlush);
 
 
 
@@ -605,7 +764,7 @@ class PrivateRuleManager {
           //console.log("we got a flush!");
           suitType = suitCounts[i][0];
 
-          //console.log("suiteType: ", suitType);
+          console.log("suitType: ", suitType);
 
           //console.log("SuitCountInFlushCalculator: ",suitCounts[i][0]);
           // console.log("suitcounts: ", suitCounts);
@@ -671,20 +830,20 @@ class PrivateRuleManager {
     // let straight = groups[0] === 1 && distance < 5;
     let straight = false;
     straight = (groups[0] > 0 && counter >= 5) || (groups[0] > 0 && highestStraight);
-    let aceSuiteTypeLetter;
+    let aceSuitTypeLetter;
     //check if Ace has same type as flush
     let sameAceTypeAsFlush = false;
-    let aceSuiteType;
+    let aceSuitType;
     if (highestStraight) {
-      aceSuiteType = AceSplitter(this.SUITS);
-      // console.log("Acesuit type: ", aceSuiteType);
-      // console.log("suit type: ", suitType);
-      // console.log("original suits: ", this.SUITS);
-      aceSuiteTypeLetter = this.SUITS[aceSuiteType];
-      // console.log("-------------------------------This is the type of the ace", aceSuiteTypeLetter);
-      if (this.SUITS[suitType] == aceSuiteTypeLetter) {
+      aceSuitType = AceSplitter(this.SUITS);
+      //  console.log("Acesuit type: ", aceSuitType);
+      //  console.log("suit type: ", suitType);
+      //  console.log("original suits: ", this.SUITS);
+      aceSuitTypeLetter = this.SUITS[aceSuitType];
+      // console.log("-------------------------------This is the type of the ace", aceSuitTypeLetter);
+      if (this.SUITS[suitType] == aceSuitTypeLetter) {
         sameAceTypeAsFlush = true;
-        // console.log("ace type is same as flush: ", sameAceTypeAsFlush);
+        console.log("ace type is same as flush: ", sameAceTypeAsFlush);
       }
     }
 
@@ -712,7 +871,9 @@ class PrivateRuleManager {
     //-------------------------------------------------
     //Anti Straight Flush calculator
     //-------------------------------------------------
+    console.log("counter: ", counter);
     let isFlushOnly = false;
+    let possibleRoyalStraightFlush = false
     if (counter >= 4) {
       if (flush) {
         let flushSuit;
@@ -723,7 +884,7 @@ class PrivateRuleManager {
         }
 
         let suitLetter = this.SUITS[flushSuit];
-        // console.log("suitLetter: ", suitLetter); //DEBUG
+        console.log("suitLetter: ", suitLetter); //DEBUG
         let shallowCards = [];
         for (let i = 0; i < hand.length; i++) {
           let card = hand[i].split("");
@@ -732,15 +893,21 @@ class PrivateRuleManager {
             shifted: shiftedFlusher[i],
             cardSuit: card[card.length - 1],
           };
+          console.log("cardObject: ", cardObject); //DEBUG
           shallowCards.push(cardObject);
         }
+        console.log("shallowCards: ", shallowCards); //DEBUG
 
-        tempArray = [];
+        let tempArray = [];
         for (let index = 0; index < shallowCards.length; index++) {
           if (shallowCards[index].cardSuit == suitLetter) {
             tempArray.push(shallowCards[index].shifted);
           }
         }
+
+
+
+
 
         // console.log("temp array length: ", tempArray.length); //DEBUG
         // console.log("TempArray: before sorting: ", tempArray); //DEBUG
@@ -750,7 +917,11 @@ class PrivateRuleManager {
           return a - b;
         });
 
-        // console.log("TempArray: ascending order: ", tempArray); //DEBUG
+        if (tempArray[tempArray.lenght - 1] == 12) {
+          possibleRoyalStraightFlush = true;
+        }
+        console.log("TempArray: ascending order: ", tempArray); //DEBUG
+        console.log("possibleRoyalStraightFlush: ", possibleRoyalStraightFlush); //DEBUG
 
         let counter1 = 0;
         for (let i = 0; i < tempArray.length; i++) {
@@ -765,12 +936,14 @@ class PrivateRuleManager {
             counter1++;
           }
         }
-        // console.log("shallowCardsCounter: ", counter1); //DEBUG
+        console.log("shallowCardsCounter: ", counter1); //DEBUG
 
 
         if ((counter1 == 4 && !sameAceTypeAsFlush) || counter1 < 4) {
           isFlushOnly = true;
+
         }
+        console.log("isFlushOnly: ", isFlushOnly); //DEBUG
       }
     }
 
@@ -815,24 +988,24 @@ class PrivateRuleManager {
     //analysing hand, returns string with hand title
     let result =
       straight && flush && highestStraight && sameAceTypeAsFlush
-        ? { handName: "Royal-straight-flush", handValue: 10, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedSuits: sortedSuits }
-        : straight && flush && !sameAceTypeAsFlush && !isFlushOnly
-          ? { handName: "straight-flush", handValue: 9, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedSuits: sortedSuits }
+        ? { handName: "Royal-straight-flush", handValue: 10, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits }
+        : flush && straightFlush
+          ? { handName: "straight-flush", handValue: 9, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits, suitType: suitType }
           : groups[0] === 4
-            ? { handName: "four-of-a-kind", handValue: 8, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedSuits: sortedSuits }
+            ? { handName: "four-of-a-kind", handValue: 8, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits }
             : groups[0] === 3 && groups[1] === 2
-              ? { handName: "full-house", handValue: 7, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedSuits: sortedSuits }
-              : flush && isFlushOnly
-                ? { handName: "flush", handValue: 6, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedSuits: sortedSuits }
+              ? { handName: "full-house", handValue: 7, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits }
+              : flush
+                ? { handName: "flush", handValue: 6, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits, suitType: suitType }
                 : straight || highestStraight
-                  ? { handName: "straight", handValue: 5, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedSuits: sortedSuits }
+                  ? { handName: "straight", handValue: 5, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits }
                   : groups[0] === 3
-                    ? { handName: "three-of-a-kind", handValue: 4, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedSuits: sortedSuits }
+                    ? { handName: "three-of-a-kind", handValue: 4, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits }
                     : groups[0] === 2 && groups[1] === 2
-                      ? { handName: "two-pair", handValue: 3, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedSuits: sortedSuits }
+                      ? { handName: "two-pair", handValue: 3, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits }
                       : groups[0] === 2
-                        ? { handName: "one-pair", handValue: 2, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedSuits: sortedSuits }
-                        : { handName: "high-card", handValue: 1, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedSuits: sortedSuits };
+                        ? { handName: "one-pair", handValue: 2, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits }
+                        : { handName: "high-card", handValue: 1, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits };
 
     // console.log("result: ",result);
     return result;
@@ -857,7 +1030,8 @@ class PrivateRuleManager {
       }
     }
     // console.log("CountShifted Shifts: ", shifted); //DEBUG
-    console.log("CountShifted-counts: ", this.shifts, this.counts); //DEBUG
+    console.log("Count Shifts: ", this.shifts); //DEBUG
+    console.log("Count counts: ", this.counts); //DEBUG
 
     return [this.shifts, this.counts];//Fields
   }
