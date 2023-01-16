@@ -3,7 +3,7 @@ const { Server } = require("ws");
 class privateWebSocket{
 
 
-     webSocketServer = new Server({port: 443});
+     webSocketServer = new Server({port: 80});
 
      constructor()
      {
@@ -24,6 +24,7 @@ class privateWebSocket{
 
      SendMessage = (pokerTable) =>{
 
+      console.log("message sent ------------------------------------------------------------------")
         console.log(pokerTable);
         this.webSocketServer.clients.forEach((client) => {
             client.send(pokerTable);

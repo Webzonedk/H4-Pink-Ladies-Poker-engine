@@ -57,13 +57,13 @@ class privateEncryption {
   };
 
   DecryptAES = (dataToDecrypt) => {
-    console.log(dataToDecrypt);
+    console.log("before decryption: ", dataToDecrypt);
     let encryptedBytes = Buffer.from(dataToDecrypt,'base64');
     let encryptedText = Buffer.from(encryptedBytes, "hex");
     let decipher = crypto.createDecipheriv(this.algorithm, this.key, this.iv);
     let decryptedData = decipher.update(encryptedText, "hex", "utf-8");
     decryptedData += decipher.final("utf8");
-    console.log(decryptedData);
+    console.log("decrypted data: ",decryptedData);
     return JSON.parse(decryptedData);
   };
 }
