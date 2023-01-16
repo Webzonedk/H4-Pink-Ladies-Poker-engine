@@ -9,7 +9,6 @@ class PrivateRuleManager {
   shifts = [];
   counts = [];
 
-
   constructor() {
     this.FACES = [
       "2",
@@ -36,8 +35,6 @@ class PrivateRuleManager {
     for (let i = 0; i < pokerTable.users.length; i++) {
       let userTempcards = [];
       userTempcards = pokerTable.users[i].pocketCards;
-
-
       userTempcards.push(...pokerTable.collectiveCards);
       let userData = {
         tempHand: userTempcards,
@@ -54,7 +51,6 @@ class PrivateRuleManager {
       let result = this.AnalyzeHand(playerHands[i].tempHand, playerHands[i].cardResult.userID);
       playerHands[i].cardResult = result;
     }
-
 
     //----------------------------------------------------
     //step two, go through all players and return an array containing the users with the highest hands applied with a value 1-10
@@ -86,7 +82,6 @@ class PrivateRuleManager {
     return this.FindHighestHand(this.highestHands);
   };
 
-
   //----------------------------------------------------
   //step three, iterate highestHands array and check if more than one user has same value card.
   //And afterwards find out who the winner(s) are
@@ -101,7 +96,6 @@ class PrivateRuleManager {
       highestHands[i].cardResult.counts = shiftCount[1]
       
       switch (highestHands[i].cardResult.handValue) {
-        
         //----------------------------------------------------
         //Highest card: itterating through array of highestHands, 
         //compairing them, to find the hihgest hand and adding them to the winnerHand array.
@@ -165,7 +159,6 @@ class PrivateRuleManager {
               winnerHands.push(highestHands[i]);
             }
           }
-
           break;
 
         case 3: //two-pair
@@ -302,7 +295,6 @@ class PrivateRuleManager {
             else {
               highestHandStraightKicker = highestHandShiftsArrays[highestHandShiftsArrays.length - 1];
             }
-
             //Checking if winnerHandShiftsArrays contains highest straight
             if (winnerHands[0] == 0 && winnerHandShiftsArrays[winnerHandShiftsArrays.length - 1] == 12) {
               winnerHandStraightKicker = 13;
@@ -319,10 +311,8 @@ class PrivateRuleManager {
               winnerHands.push(highestHands[i]);
             }
           }
-
-
-
           break;
+
         case 6: //flush
           if (i == 0) {
             winnerHands.push(highestHands[i]);
@@ -446,6 +436,7 @@ class PrivateRuleManager {
             }
           }
           break;
+
         case 8: //four-of-a-kind
           if (i == 0) {
             winnerHands.push(highestHands[i]);
@@ -477,6 +468,7 @@ class PrivateRuleManager {
             }
           }
           break;
+
         case 9: //straight flush
           let highestHandsFlushFacesArray = [];
           let winnerHandsFlushFacesArray = [];
@@ -547,7 +539,6 @@ class PrivateRuleManager {
           else {
             highestHandsStrightFlushKicker = highestHandsStrightFlushArray[highestHandsStrightFlushArray.length - 1];
           }
-
           //Checking if winnerHandsStraightFlushArray contains highest straihght
           if (winnerHands[0] == 0 && winnerHandsStraightFlushArray[winnerHandsStraightFlushArray.length - 1] == 12) {
             winnerHandsStraightFlushKicker = 13;
@@ -563,26 +554,15 @@ class PrivateRuleManager {
           else if (highestHandsStrightFlushKicker == winnerHandsStraightFlushKicker) {
             winnerHands.push(highestHands[i]);
           }
-
-
-
           break;
 
         default://Royal stright flush
           winnerHands.push(highestHands[i]);
           break;
       }
-
     }
     return winnerHands;
   }
-
-
-
-
-
-
-
 
   //-------------------------------------------------------------------------------------
   //This is the first analyzer, only to decide wich hands each player has. It will be compared afterwards in top of code
@@ -590,8 +570,6 @@ class PrivateRuleManager {
   AnalyzeHand = (hand, userID) => {
     let faces = hand.map((card) => this.FACES.indexOf(card.slice(0, -1)));
     let suits = hand.map((card) => this.SUITS.indexOf(card.slice(-1)));
-
-
 
     //sort faces and suit to combined array
     let tempFaces = [];
@@ -614,7 +592,6 @@ class PrivateRuleManager {
       }
 
     }
-
 
     //------------------------------------------------
     //straight flush calculator
@@ -674,7 +651,6 @@ class PrivateRuleManager {
       straightFlush = true;
     }
 
-
     //------------------------------------------------
     //Flush Calculator
     //------------------------------------------------
@@ -693,23 +669,17 @@ class PrivateRuleManager {
           return true;
         }
       }
-
       return false;
     }
-    //------------------------------------------------
-    //------------------------------------------------
 
     //Counting grouped cards of same faces. Creates a shallow copy of FACES array and grouping by value, from index 0
     let groups = this.FACES.map((face, i) => faces.filter((j) => i === j).length).sort(
       (x, y) => y - x
     );
 
-
-
     //calculating straight by first calculating the remainder of the value + 1 divided by 13.
     let shifted = faces.map((x) => (x + 1) % 13);
     let shiftedFlusher = faces.map((x) => (x + 1) % 13);
-
 
     //-------------------------------------------------
     //Straight calculator
@@ -763,14 +733,6 @@ class PrivateRuleManager {
       let indexNumber = suits.findIndex((element) => element == splittedAce[1]);
       return indexNumber;
     };
-    //-------------------------------------------------
-    //-------------------------------------------------
-
-
-
-
-    //-------------------------------------------------
-    //-------------------------------------------------
 
     //-------------------------------------------------
     //Anti Straight Flush calculator
@@ -805,7 +767,6 @@ class PrivateRuleManager {
           }
         }
 
-
         //Sorting the array ascending
         tempArray.sort(function (a, b) {
           return a - b;
@@ -829,16 +790,12 @@ class PrivateRuleManager {
           }
         }
 
-
         if ((counter1 == 4 && !sameAceTypeAsFlush) || counter1 < 4) {
           isFlushOnly = true;
 
         }
       }
     }
-
-
-
 
     //analysing hand, returns string with hand title
     let result =
@@ -886,37 +843,9 @@ class PrivateRuleManager {
     return [this.shifts, this.counts];//Fields
   }
 
-
-
-  // //---------------------------------------------------------
-  // //Notimplemented yet
-  // AddHighLowKick = (playerHand) => {
-  //   if (shifted[0] == 0) {
-  //     this.kicker = 0;
-  //   }
-  //   if (groups[0] == 2 && groups[1] < 2) {
-  //     for (let i = 0; i < this.CountShifted.length; i++) {
-  //       if (this.CountShifted[i] == 2) {
-  //         highest = 0;
-  //       }
-
-  //     }
-  //     highest == 0;
-  //   }
-  //   if (groups[0] == 2 && groups[1] == 2) {
-
-  //   }
-  // }
-  // //---------------------------------------------------------
-
-
-
-
-
-
 }
-class RuleManager {
 
+class RuleManager {
 
   constructor() {
     throw new Error('Use RuleManager.getInstance()');
@@ -930,7 +859,6 @@ class RuleManager {
 
 
 }
-
 
 module.exports = { RuleManager };
 
