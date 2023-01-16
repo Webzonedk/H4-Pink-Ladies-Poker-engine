@@ -32,20 +32,23 @@ class PrivateRuleManager {
   CompareHands = (pokerTable) => {
     //temporary array of cards from
     let playerHands = [];
-    //  console.log("pokertable: ", pokerTable);
-
+      //console.log("pokertable: ", pokerTable);
+    
+    //console.log("pokerTable.users[i]",pokerTable.users[i]);
     //Adding playerhands to temp array
     for (let i = 0; i < pokerTable.users.length; i++) {
+      console.log("pokerTable.users[i]",pokerTable.users[i].userID);
       let userTempcards = [];
+      let userIDs=[];
       userTempcards = pokerTable.users[i].pocketCards;
-
+      
       //console.log("pokerTable collectivecards: ", pokerTable.collectiveCards);
-
+      
       userTempcards.push(...pokerTable.collectiveCards);
       //console.log("userTempcards: ", userTempcards);
       let userData = {
         tempHand: userTempcards,
-        cardResult: { handName: "", handValue: 0, shift: [], high: 0, low: 0, kick: 0, shifts: [], counts: [], sortedFaces: [], sortedSuits: [], suitType: 0 },
+        cardResult: { userID: pokerTable.users[i].userID ,handName:  "", handValue: 0, shift: [], high: 0, low: 0, kick: 0, shifts: [], counts: [], sortedFaces: [], sortedSuits: [], suitType: 0 },
       };
       playerHands.push(userData);
 
@@ -55,7 +58,7 @@ class PrivateRuleManager {
     //  console.log("playerHands.length: ", playerHands.length);
     for (let i = 0; i < playerHands.length; i++) {
       // console.log("temp hands: ", playerHands[i].tempHand);
-      let result = this.AnalyzeHand(playerHands[i].tempHand);
+      let result = this.AnalyzeHand(playerHands[i].tempHand, playerHands[i].cardResult.userID );
       playerHands[i].cardResult = result;
 
       //console.log("cardresult: ", playerHands[i].cardResult);
@@ -109,7 +112,7 @@ class PrivateRuleManager {
 
     //console.log("highLowCounter: " + this.CountShifted(this.playerHands));
 
-    this.FindHighestHand(this.highestHands);
+   return this.FindHighestHand(this.highestHands);
   };
 
 
@@ -664,6 +667,7 @@ class PrivateRuleManager {
     console.log("all winnerHands: ", winnerHands);
     //console.log("all realWinnerHands: ", realWinnerHands);
     // console.log("winnerHands shifts: ", winnerHands[0].shifts);
+    return winnerHands;
   }
 
 
@@ -673,16 +677,15 @@ class PrivateRuleManager {
 
 
 
-  //----------------------------------------------------
-  //step 4 return the users with the highest card value and highest shift.
-  //----------------------------------------------------
-
-  AnalyzeHand = (hand) => {
+//-------------------------------------------------------------------------------------
+//This is the first analyzer, only to decide wich hands each player has. It will be compared afterwards in top of code
+//-------------------------------------------------------------------------------------
+  AnalyzeHand = (hand, userID) => {
     // console.log("Analyzing ------------------------------- Analyzing"); //DEBUG
     let faces = hand.map((card) => this.FACES.indexOf(card.slice(0, -1)));
     let suits = hand.map((card) => this.SUITS.indexOf(card.slice(-1)));
     // console.log("faces: ", faces);
-    // console.log("Suits: ", suits);
+     console.log("Suits: ", suits);
 
 
 
@@ -710,44 +713,103 @@ class PrivateRuleManager {
 
     console.log("sortedFaces: ", sortedFaces);
     console.log("sortedSuits: ", sortedSuits);
-
-
+    
+    
     //------------------------------------------------
     //straight flush calculator
     //------------------------------------------------
     let straightFlush = false;
     let sfArray = [];
+    let Array0 = [];
+    let Array1 = [];
+    let Array2 = [];
+    let Array3 = [];
     let sfCounter = 0;
     let lastCount;
-    sfArray.push(sortedFaces[sortedFaces.length - 1]);
-    for (let i = 0; i < sortedFaces.length - 1; i++) {
-      if (sortedFaces[i] == sortedFaces[i + 1] - 1 && sortedSuits[i] == sortedSuits[i + 1]) {
-        sfCounter++
-        lastCount=sortedFaces[i] //Just to remember last face
-      }
-      else if ((sortedFaces[i] != sortedFaces[i + 1] - 1 || sortedSuits[i] != sortedSuits[i + 1]) && sfCounter <= 2) {
-        sfCounter = 0;
-        sfCounter++
-      }
-      else if ((sortedFaces[i] != sortedFaces[i + 1] - 1 || sortedSuits[i] != sortedSuits[i + 1]) && sfCounter >= 2) {
-        sfCounter = sfCounter;
-      }
-      if (sfCounter >= 5) {
-        if (sortedFaces[sortedFaces.length - 1] == 12) {
-          if (sortedFaces[0] != 0) {
-            straightFlush = true;
-          }
-          else { straightFlush = false; }
-        }
-        else {
-          straightFlush = true;
+    let sfSuit=0;
 
+    for (let i = 0; i < sortedFaces.length; i++) {
+       if (sortedSuits[i]==0) {
+        Array0.push(sortedFaces[i]);
+        if (Array0.length>=5) {
+          sfSuit=Array0;
         }
-        
-        console.log("sfArray: ", sfArray);
       }
-
+      else if(sortedSuits[i]==1){
+        Array1.push(sortedFaces[i]);
+        if (Array1.length>=5) {
+          sfSuit=Array1;
+        }
+      }
+      else if(sortedSuits[i]==2){
+        Array2.push(sortedFaces[i]);
+        if (Array2.length>=5) {
+          sfSuit=Array2;
+        }
+      }
+      else if(sortedSuits[i]==2){
+        Array2.push(sortedFaces[i]);
+        if (Array3.length>=5) {
+          sfSuit=Array3;
+        }
+      }
     }
+    console.log("sfSuit: ", sfSuit);
+
+    for (let i = 0; i < sfSuit.length; i++) {
+      if (i==0) {
+        sfCounter++
+        lastCount=sfSuit[i] //Just to remember last face
+      }
+      else if (sfSuit[i] == sfSuit[i - 1] + 1) {
+        sfCounter++
+        lastCount=sfSuit[i] //Just to remember last face
+      }
+      else if(sfSuit[i] != sfSuit[i - 1] + 1 && sfCounter <2){
+        sfCounter=0;
+        sfCounter++
+      }
+      
+      console.log("sfCounter: ", sfCounter);
+      console.log("lastCount: ", lastCount);
+    }
+    if (sfCounter >=5) {
+      straightFlush=true;
+    }
+    
+    // sfArray.push(sortedFaces[sortedFaces.length - 1]);
+    // for (let i = 0; i < sortedFaces.length - 1; i++) {
+    //   if (sortedFaces[i] == sortedFaces[i + 1] - 1 && sortedSuits[i] == sortedSuits[i + 1]) {
+    //     sfCounter++
+    //     lastCount=sortedFaces[i] //Just to remember last face
+    //   }
+    //   if(sortedFaces[i]==lastCount+1 && sortedSuits[i] == sortedSuits[i + 1]){
+    //     sfCounter++
+    //   }
+    //   else if ((sortedFaces[i] != sortedFaces[i + 1] - 1 || sortedSuits[i] != sortedSuits[i + 1]) && sfCounter <= 2) {
+    //     sfCounter = 0;
+    //     sfCounter++
+    //   }
+    //   else if ((sortedFaces[i] != sortedFaces[i + 1] - 1 || sortedSuits[i] != sortedSuits[i + 1]) && sfCounter >= 2) {
+    //     sfCounter = sfCounter;
+    //   }
+    //   if (sfCounter >= 5) {
+    //     if (sortedFaces[sortedFaces.length - 1] == 12) {
+    //       if (sortedFaces[0] != 0) {
+    //         straightFlush = true;
+    //       }
+    //       else { straightFlush = false; }
+    //     }
+    //     else {
+    //       straightFlush = true;
+
+    //     }
+        
+    //     console.log("sfSuit: ", sfSuit);
+    //     console.log("sfArray: ", sfArray);
+    //   }
+
+    // }
     console.log("straightFlush: ", straightFlush);
 
 
@@ -995,24 +1057,24 @@ class PrivateRuleManager {
     //analysing hand, returns string with hand title
     let result =
       straight && flush && highestStraight && sameAceTypeAsFlush
-        ? { handName: "Royal-straight-flush", handValue: 10, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits }
+        ? { userID: userID, handName: "Royal-straight-flush", handValue: 10, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits }
         : flush && straightFlush
-          ? { handName: "straight-flush", handValue: 9, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits, suitType: suitType }
+          ? { userID: userID, handName: "straight-flush", handValue: 9, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits, suitType: suitType }
           : groups[0] === 4
-            ? { handName: "four-of-a-kind", handValue: 8, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits }
+            ? { userID: userID, handName: "four-of-a-kind", handValue: 8, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits }
             : groups[0] === 3 && groups[1] === 2
-              ? { handName: "full-house", handValue: 7, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits }
+              ? { userID: userID, handName: "full-house", handValue: 7, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits }
               : flush
-                ? { handName: "flush", handValue: 6, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits, suitType: suitType }
+                ? { userID: userID, handName: "flush", handValue: 6, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits, suitType: suitType }
                 : straight || highestStraight
-                  ? { handName: "straight", handValue: 5, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits }
+                  ? { userID: userID, handName: "straight", handValue: 5, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits }
                   : groups[0] === 3
-                    ? { handName: "three-of-a-kind", handValue: 4, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits }
+                    ? { userID: userID, handName: "three-of-a-kind", handValue: 4, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits }
                     : groups[0] === 2 && groups[1] === 2
-                      ? { handName: "two-pair", handValue: 3, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits }
+                      ? { userID: userID, handName: "two-pair", handValue: 3, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits }
                       : groups[0] === 2
-                        ? { handName: "one-pair", handValue: 2, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits }
-                        : { handName: "high-card", handValue: 1, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits };
+                        ? { userID: userID, handName: "one-pair", handValue: 2, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits }
+                        : { userID: userID, handName: "high-card", handValue: 1, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits };
 
     // console.log("result: ",result);
     return result;

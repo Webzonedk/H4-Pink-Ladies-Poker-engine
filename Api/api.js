@@ -147,7 +147,7 @@ app.get("/api/ruleManagerTest", (req, res) => {
   // let testPocketCards = [["4C", "7H"], ["aC", "4S"]]; //flush
   // let testPocketCards = [["jD", "10S"], ["kD", "10H"]]; //full house
   // let testPocketCards = [["10D", "10H"], ["jD", "jS"]]; //4 of a kind
-  let testPocketCards = [["2C", "7H"], ["7C", "6H"]]; //straight flush
+  let testPocketCards = [["2C", "7H"], ["7C", "8C"]]; //straight flush
   // let testPocketCards = [["aC", "7H"], ["6C", "7C"]]; //straight flush
   //let testPocketCards = [["3D", "7H"], ["5D", "6S"], ["5S", "jS"]]; //one pair * 2
   //let testPocketCards = [["3D", "7H"], ["5S", "6S"], ["5D", "jS"], ["10D", "10S"], ["2S", "9S"], ["aD", "8D"]]; //With two straights high and low
@@ -183,7 +183,7 @@ app.get("/api/ruleManagerTest", (req, res) => {
   //-----------------------------------------------
 
   let result = ruleManager.CompareHands(pokerTable);
-
+console.log("final result in api", result)
   res.status(200).send(result);
 });
 
