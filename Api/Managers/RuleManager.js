@@ -625,29 +625,29 @@ class PrivateRuleManager {
           console.log("highestHandsStrightFlushKicker: ", highestHandsStrightFlushKicker);
           console.log("winnerHandsStraightFlushKicker: ", winnerHandsStraightFlushKicker);
 
-          // //Checking if highestHandShiftsArrays contains highest straihght
-          // if (highestHands[0] == 0 && highestHandShiftsArrays[highestHandShiftsArrays.length - 1] == 12) {
-          //   highestHandStraightKicker = 13;
-          // }
-          // else {
-          //   highestHandStraightKicker = highestHandShiftsArrays[highestHandShiftsArrays.length - 1];
-          // }
+          //Checking if highestHandsStrightFlushArray contains highest straihght
+          if (highestHands[0] == 0 && highestHandsStrightFlushArray[highestHandsStrightFlushArray.length - 1] == 12) {
+            highestHandsStrightFlushKicker = 13;
+          }
+          else {
+            highestHandsStrightFlushKicker = highestHandsStrightFlushArray[highestHandsStrightFlushArray.length - 1];
+          }
 
-          // //Checking if winnerHandShiftsArrays contains highest straihght
-          // if (winnerHands[0] == 0 && winnerHandShiftsArrays[winnerHandShiftsArrays.length - 1] == 12) {
-          //   winnerHandStraightKicker = 13;
-          // }
-          // else {
-          //   winnerHandStraightKicker = winnerHandShiftsArrays[winnerHandShiftsArrays.length - 1];
-          // }
-          // //Comparing the arrays to find the highest straight
-          // if (highestHandStraightKicker > winnerHandStraightKicker) {
-          //   winnerHands = [];
-          //   winnerHands.push(highestHands[i]);
-          // }
-          // else if (highestHandStraightKicker == winnerHandStraightKicker) {
-          //   winnerHands.push(highestHands[i]);
-          // }
+          //Checking if winnerHandsStraightFlushArray contains highest straihght
+          if (winnerHands[0] == 0 && winnerHandsStraightFlushArray[winnerHandsStraightFlushArray.length - 1] == 12) {
+            winnerHandsStraightFlushKicker = 13;
+          }
+          else {
+            winnerHandsStraightFlushKicker = winnerHandsStraightFlushArray[winnerHandsStraightFlushArray.length - 1];
+          }
+          //Comparing the arrays to find the highest straight
+          if (highestHandsStrightFlushKicker > winnerHandsStraightFlushKicker) {
+            winnerHands = [];
+            winnerHands.push(highestHands[i]);
+          }
+          else if (highestHandsStrightFlushKicker == winnerHandsStraightFlushKicker) {
+            winnerHands.push(highestHands[i]);
+          }
 
 
 
@@ -718,14 +718,19 @@ class PrivateRuleManager {
     let straightFlush = false;
     let sfArray = [];
     let sfCounter = 0;
+    let lastCount;
     sfArray.push(sortedFaces[sortedFaces.length - 1]);
     for (let i = 0; i < sortedFaces.length - 1; i++) {
       if (sortedFaces[i] == sortedFaces[i + 1] - 1 && sortedSuits[i] == sortedSuits[i + 1]) {
         sfCounter++
+        lastCount=sortedFaces[i] //Just to remember last face
       }
-      else if ((sortedFaces[i] != sortedFaces[i + 1] - 1 || sortedSuits[i] != sortedSuits[i + 1]) && sfCounter < 3) {
+      else if ((sortedFaces[i] != sortedFaces[i + 1] - 1 || sortedSuits[i] != sortedSuits[i + 1]) && sfCounter <= 2) {
         sfCounter = 0;
         sfCounter++
+      }
+      else if ((sortedFaces[i] != sortedFaces[i + 1] - 1 || sortedSuits[i] != sortedSuits[i + 1]) && sfCounter >= 2) {
+        sfCounter = sfCounter;
       }
       if (sfCounter >= 5) {
         if (sortedFaces[sortedFaces.length - 1] == 12) {
@@ -739,7 +744,9 @@ class PrivateRuleManager {
 
         }
         
+        console.log("sfArray: ", sfArray);
       }
+
     }
     console.log("straightFlush: ", straightFlush);
 
@@ -871,7 +878,7 @@ class PrivateRuleManager {
     //-------------------------------------------------
     //Anti Straight Flush calculator
     //-------------------------------------------------
-    console.log("counter: ", counter);
+    //console.log("counter: ", counter);
     let isFlushOnly = false;
     let possibleRoyalStraightFlush = false
     if (counter >= 4) {
@@ -884,7 +891,7 @@ class PrivateRuleManager {
         }
 
         let suitLetter = this.SUITS[flushSuit];
-        console.log("suitLetter: ", suitLetter); //DEBUG
+       // console.log("suitLetter: ", suitLetter); //DEBUG
         let shallowCards = [];
         for (let i = 0; i < hand.length; i++) {
           let card = hand[i].split("");
@@ -893,7 +900,7 @@ class PrivateRuleManager {
             shifted: shiftedFlusher[i],
             cardSuit: card[card.length - 1],
           };
-          console.log("cardObject: ", cardObject); //DEBUG
+        //  console.log("cardObject: ", cardObject); //DEBUG
           shallowCards.push(cardObject);
         }
         console.log("shallowCards: ", shallowCards); //DEBUG
