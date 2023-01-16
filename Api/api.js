@@ -38,7 +38,7 @@ app.post("/api/GetAES", (req, res) => {
 });
 
 //create new user
-app.post("/api/CreateUser", (req,  res) => {
+app.post("/api/CreateUser", (req, res) => {
   //test encrypted user
   const userName = req.body.data;
 
@@ -61,8 +61,8 @@ app.post("/api/Useraction", (req, res) => {
   
   const decryptedUserAction = Encryption.GetInstance().DecryptAES(encryptedUserAction);
   console.log(decryptedUserAction);
-  Lobby.GetInstance().pokerTables[decryptedUserAction.tableID].UpdateUserState(decryptedUserAction.id,decryptedUserAction.action, decryptedUserAction.value);
- 
+  Lobby.GetInstance().pokerTables[decryptedUserAction.tableID].UpdateUserState(decryptedUserAction.id, decryptedUserAction.action, decryptedUserAction.value);
+
 
 
 
@@ -81,8 +81,8 @@ app.post("/api/PlayAgain", (req, res) => {
 
 //leave poker table
 
-  // const encryptedUserID = req.body.userID;
-  // const decryptedUserID = encryption.DecryptAES(encryptedUserID);
+// const encryptedUserID = req.body.userID;
+// const decryptedUserID = encryption.DecryptAES(encryptedUserID);
 app.post('/api/LeaveTable', (req, res) => {
 
   //test encrypted user
@@ -128,27 +128,9 @@ app.get("/api/testCardDeck", (req, res) => {
 
 //test rulemanager
 app.get("/api/ruleManagerTest", (req, res) => {
-   const ruleManager = RuleManager.GetInstance();
+  const ruleManager = RuleManager.GetInstance();
   //const PokerTable = require('./LogicHandlers/PokerTable');
   //const User = require('./Models/User');
-
-  let hand8 = ["2H", "2D", "2C", "kD", "kD", "10D", "3C"]; //full house
-  let hand7 = ["2D", "3D", "4D", "5D", "8D", "10H", "kC"]; //flush
-  let hand6 = ["2D", "3D", "4D", "5D", "6D", "10D", "3C"]; //straight flush
-  let hand5 = ["2H", "3D", "4C", "5C", "6D", "10D", "3C"]; //straight
-  let hand4 = ["2H", "2D", "2C", "kC", "qD", "10D", "3C"]; //three of a kind
-  let hand3 = ["2H", "2D", "4C", "4D", "6D", "10D", "3C"]; //two pairs
-  let hand2 = ["2H", "3D", "4C", "5C", "8D", "10D", "10C"]; //one pair
-  let hand1 = ["2H", "3D", "aC", "5C", "8D", "10D", "kC"]; //highest card
-
-  let hand_8 = ["5D", "3C", "10C", "jC", "qC", "kC", "8H"]; //flush
-  let hand_7 = ["2D", "9C", "10C", "jC", "qC", "kC", "8H"]; //straight flush
-  let hand_6 = ["3H", "aD", "10C", "jC", "qC", "kC", "8H"]; //straight
-  let hand_5 = ["2H", "aH", "10C", "jC", "qC", "kC", "8H"]; //straight
-  let hand_4 = ["jH", "jD", "10C", "jC", "qC", "kC", "8H"]; //three of a kind
-  let hand_3 = ["jH", "qD", "10C", "jC", "qC", "kC", "8H"]; //two pairs
-  let hand_2 = ["2H", "kD", "10C", "jC", "qC", "kC", "8H"]; //one pair
-  let hand_1 = ["aH", "3D", "10C", "jC", "qC", "kC", "8H"]; //highest card
 
   //let result = ruleManager.analyzeHand(hand_1);
 
@@ -159,11 +141,12 @@ app.get("/api/ruleManagerTest", (req, res) => {
   // let testPocketCards = [["2S", "5D"],["10D", "7H"]]; //1 pair
   // let testPocketCards = [["10D", "5H"], ["kS", "10S"]]; //2 pair
   // let testPocketCards = [["10D", "10H"], ["jD", "jS"]]; //3 of a kind
-  let testPocketCards = [["4D", "8H"], ["kD", "4S"]]; //straight
-  // let testPocketCards = [["4C", "8H"], ["7C", "4S"]]; //flush
+  // let testPocketCards = [["4D", "8H"], ["kD", "4S"]]; //straight
+  // let testPocketCards = [["4C", "7H"], ["aC", "4S"]]; //flush
   // let testPocketCards = [["jD", "10S"], ["kD", "10H"]]; //full house
   // let testPocketCards = [["10D", "10H"], ["jD", "jS"]]; //4 of a kind
-  // let testPocketCards = [["4C", "8C"], ["kC", "4S"]]; //straight flush
+  let testPocketCards = [["2C", "7H"], ["7C", "8C"]]; //straight flush
+  // let testPocketCards = [["aC", "7H"], ["6C", "7C"]]; //straight flush
   //let testPocketCards = [["3D", "7H"], ["5D", "6S"], ["5S", "jS"]]; //one pair * 2
   //let testPocketCards = [["3D", "7H"], ["5S", "6S"], ["5D", "jS"], ["10D", "10S"], ["2S", "9S"], ["aD", "8D"]]; //With two straights high and low
   // testPocketCards=[["1x card"], ["1 x pair"], ["2 x pair"], ["3 x kind "], ["straight"], ["flush   "], ["full hou"], ["4 x kind  "], ["str flu"],["royal flu"]]
@@ -184,8 +167,9 @@ app.get("/api/ruleManagerTest", (req, res) => {
     pokerTable.users.push(user);
   }
   // pokerTable.collectiveCards=["10C", "jC", "qC", "kC", "8H"]; //straight flush and royal straight flush test
-  // pokerTable.collectiveCards=["10C", "jC", "qC", "9C", "8H"]; //straight flush
-  pokerTable.collectiveCards = ["10C", "jC", "qC", "5C", "9H"]; //straight and flush, 
+  // pokerTable.collectiveCards = ["2C", "3C", "4C", "8H", "5C"]; //straight flush
+  pokerTable.collectiveCards = ["6C", "3C", "4C", "8H", "5C"]; //straight flush
+  // pokerTable.collectiveCards = ["10C", "jC", "qC", "5C", "9H"]; //straight and flush, 
   // pokerTable.collectiveCards = ["10C", "10D", "jK", "jC", "kH"]; //Full house
   // pokerTable.collectiveCards = ["10C", "7C", "8C", "jC", "5H"]; //3 of a kind
   // pokerTable.collectiveCards = ["10C", "10S", "jH", "jC", "5H"]; //4 of a kind
@@ -197,20 +181,20 @@ app.get("/api/ruleManagerTest", (req, res) => {
   //-----------------------------------------------
 
   let result = ruleManager.CompareHands(pokerTable);
-
+console.log("final result in api", result)
   res.status(200).send(result);
 });
 
 //test websocket
-app.post("/api/sendMessage",(req, res) => {
-    let message = req.body;
-    console.log(message);
-   // let data = Buffer.from(JSON.stringify(message));
-    //Websocket.GetInstance().SendMessage(data);
-    Encryption.GetInstance().EncryptAES(message);
+app.post("/api/sendMessage", (req, res) => {
+  let message = req.body;
+  console.log(message);
+  // let data = Buffer.from(JSON.stringify(message));
+  //Websocket.GetInstance().SendMessage(data);
+  Encryption.GetInstance().EncryptAES(message);
 
-    res.sendStatus(200);
-  });
+  res.sendStatus(200);
+});
 
 //test cleaning lady
 app.post("/api/cleaningLady", (req, res) => {
