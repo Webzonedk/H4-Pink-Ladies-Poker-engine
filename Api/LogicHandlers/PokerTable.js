@@ -19,6 +19,8 @@ class PokerTable {
   currentUser;
   round;
   waitingTimer;
+  gameRunning;
+  currentHandNumber;
 
   constructor() {
     this.dealer = 0;
@@ -29,15 +31,14 @@ class PokerTable {
     this.totalPot = 0;
     this.currentUser = 0;
     this.round = 0;
-    this.waitingTimer = 5;
+    this.waitingTimer = 10;
+    this.gameRunning = true;
   }
 
   //run the entire game loop
   RunGame = () => {
-
     //observing how many users has attended, and reset timer when new user arrive
     if (this.waitingTimer > 0) {
-
       //evaluate if enough players is present to start the game
       let aboveOne = false;
       let checkUserTimer = setInterval(() => {
@@ -61,11 +62,9 @@ class PokerTable {
           console.log(this.waitingTimer);
 
           //start the game when countdown timer is zero
-          if (this.waitingTimer <= 0) {
-
-            this.waitingTimer = 5;
+          if (this.waitingTimer <= 0 ) {
+            //this.waitingTimer = 10;
             this.ClearCurrentInterval(CountdownTimer);
-
 
             //create new card deck
             this.cardDeck = this.CardDeckManager.GetInstance().NewCardDeck();
@@ -73,38 +72,38 @@ class PokerTable {
             //add roles to users
             this.AddRoles();
 
-
             //deal pocket cards
             this.DealPocketCards();
             this.round++;
 
-
-             //send snapshot
-             let snapshot = this.CreateSnapshot();
-             this.Encryption.GetInstance().EncryptAES(snapshot);
+            //send snapshot
+            let snapshot = this.CreateSnapshot();
+            this.Encryption.GetInstance().EncryptAES(snapshot);
 
             //activate check for players that no longer is playable
-            let kickLoop = setInterval(() => {
-              this.VerifyOrKickPlayer();
+            // let kickLoop = setInterval(() => {
+            //   this.VerifyOrKickPlayer();
 
-              //stop kickLoop when users are below 2
-              if (this.users.length < 2) {
-                this.ClearCurrentInterval(kickLoop);
-              }
-            }, 1000);
+            //   //stop kickLoop when users are below 2
+            //   if (this.users.length < 2) {
+            //     this.ClearCurrentInterval(kickLoop);
+            //   }
+            // }, 1000);
 
             if (this.round > 0) {
               //check when every player has had their turn
-              let roundIsDone = false;
+             // let roundIsDone = false;
               let playerChecker = setInterval(() => {
-
-
                 //stop loop if one player remains
                 if (this.users.length < 2) {
                   this.ClearCurrentInterval(playerChecker);
                   this.round = 4;
                 }
-
+                  console.log("checking users----------------------------------------------")
+                  for (let i = 0; i < this.users.length; i++) {
+                    console.log("username: " + this.users[i].userName + " index: "+ i + " action: " + this.users[i].state);
+                    
+                  }
                 //check if all users are done with their turn
                 if (!this.users.find((user) => user.state == " ")) {
                   console.log("all done!");
@@ -131,29 +130,42 @@ class PokerTable {
                   console.log("Ready for next round: ", this.round);
                 }
 
-                console.log("are they done? ", roundIsDone);
+                //console.log("are they done? ", roundIsDone);
 
                 //stop the round and analyze the hands
                 if (this.round > 3) {
                   this.ClearCurrentInterval(playerChecker);
+                  console.log(
+                    "-------------------------------------------------------------------------------------------------------------------------------"
+                  );
                   console.log("ready to analyze");
 
                   //compare all hands
                   this.winners = [];
                   let snapshot = this.CreateSnapshot();
-                  let filteredUsers = snapshot.users.filter((user) => user.pocketCards.length > 1);
+                  let filteredUsers = snapshot.users.filter(
+                    (user) => user.pocketCards.length > 1
+                  );
                   snapshot.users = filteredUsers;
-                  winners = this.RuleManager.GetInstance().CompareHands(snapshot);
+                  //  console.log(snapshot);
+                  this.winners =
+                    this.RuleManager.GetInstance().CompareHands(snapshot);
 
                   //distribute totalPot
-                  let fractionPot = this.totalPot / winners.length;
-                  for (let i = 0; i < winners.length; i++) {
-                    
-
-                     let index = users.findIndex((user) => user.userID == winners[i].cardResult.userID);
-
-                    users[index].saldo += fractionPot;
-                    console.log(`user: ${users[index].userName} won with: ${winners[i].cardResult.handName}`);
+                  let fractionPot = this.totalPot / this.winners.length;
+                  for (let i = 0; i < this.winners.length; i++) {
+                    let index = this.users.findIndex(
+                      (user) => user.userID == this.winners[i].cardResult.userID
+                    );
+                    this.users[index].saldo += fractionPot;
+                    console.log(
+                      `user: ${this.users[index].userName} won with: ${this.winners[i].cardResult.handName}`
+                    );
+                    console.log("Index of user: ", index);
+                    //console.log("user: ", this.users[index]);
+                    console.log(
+                      "-------------------------------------------------------------------------------------------------------------------------------"
+                    );
                   }
 
                   //kick players with zero saldo
@@ -161,23 +173,38 @@ class PokerTable {
 
                   //reset game and start new game
                   this.ResetGame();
-                  this.RunGame();
-
+                  // this.RunGame();
+                  this.gameRunning = false;
                 }
-              }, 1000);
+              }, 500);
 
               //change turn every 5 second
               let turnChanger = setInterval(() => {
-
                 console.log("turner is still running async");
                 //stop game if players are less than two
                 if (this.users.length < 2) {
                   this.ClearCurrentInterval(turnChanger);
                 }
 
+                //create new game if current game is done
+                if (!this.gameRunning) {
+                  this.currentHandNumber++;
+                  this.ClearCurrentInterval(turnChanger);
+                  this.RunGame();
+                }
+
                 //allow this code if there are users on the poker table
                 if (this.users.length > 0) {
-
+                  //if round 1 bet from big blind & small blind
+                  if (this.round == 1) {
+                    if (this.smallBlind == this.currentUser) {
+                      this.users[this.currentUser].state = "bet";
+                      this.users[this.currentUser].bet = 25;
+                    } else if (this.bigBlind == this.currentUser) {
+                      this.users[this.currentUser].state = "bet";
+                      this.users[this.currentUser].bet = 50;
+                    }
+                  }
 
                   //set user interaction
                   let action = this.users[this.currentUser].state;
@@ -189,14 +216,11 @@ class PokerTable {
                       this.users[this.currentUser].pocketCards = [];
                       break;
                     case "check":
-
                       break;
                     case "bet":
-
                       this.CalculateBet();
                       break;
                     case "call":
-
                       this.CalculateBet();
                       break;
                     case "raise":
@@ -219,23 +243,16 @@ class PokerTable {
                     this.ClearCurrentInterval(turnChanger);
                   }
                 }
-              }, 5000);
+              }, 500);
             }
-
-
           }
         }
-      }, 250);
-
-
+      }, 1000); //ensuring 10 seconds countdown
     }
-
-
   };
 
   //reset game
   ResetGame = () => {
-    this.dealer = 0;
     this.smallBlind = 0;
     this.bigBlind = 0;
     this.currentBet = 0;
@@ -248,7 +265,12 @@ class PokerTable {
     this.collectiveCards = [];
     this.cardDeck = [];
     this.winners = [];
-  }
+
+    for (let i = 0; i < this.users.length; i++) {
+      this.users[i].state = " ";
+      this.users[i].bet = 0;
+    }
+  };
 
   //local helper method for calculating betting
   CalculateBet = () => {
@@ -256,7 +278,7 @@ class PokerTable {
     this.totalBet += bet;
     this.users[this.currentUser].saldo -= bet;
     this.currentBet = bet;
-  }
+  };
 
   //create snapshot of pokertable
   CreateSnapshot = () => {
@@ -287,7 +309,15 @@ class PokerTable {
   AddRoles = () => {
     //generate random number to select dealer
     if (this.round < 1) {
-      this.dealer = Math.floor(Math.random() * this.users.length);
+      if (this.currentHandNumber < 1) {
+        this.dealer = Math.floor(Math.random() * this.users.length);
+      } else {
+        if (this.dealer < this.users.length) {
+          this.dealer++;
+        } else {
+          this.dealer = 0;
+        }
+      }
     } else {
       this.dealer++;
 
@@ -296,7 +326,9 @@ class PokerTable {
         this.dealer = 0;
       }
     }
-
+    console.log(
+      "adding roles"
+    );
     //small blind is dealer + 1
     this.smallBlind = this.dealer + 1;
     if (this.smallBlind == this.users.length) {
@@ -307,7 +339,42 @@ class PokerTable {
     this.bigBlind = this.dealer + 2;
     if (this.bigBlind >= this.users.length) {
       this.bigBlind = this.smallBlind + 1;
+
+      if (this.bigBlind == this.users.length) {
+        this.bigBlind = 0;
+      }
+      if (this.bigBlind > this.users.length) {
+        this.bigBlind = 1;
+      }
     }
+
+    //if users length == users length then set current user ti zero
+    this.currentUser = this.bigBlind + 1;
+    if (this.currentUser >= this.users.length) {
+      this.currentUser = 0;
+    }
+
+    //if currentUser >this.users.length then currentuser = (currentUser-(this.users.length+1))
+
+    if (this.currentUser > this.users.length) {
+      this.currentUser = this.currentUser - (this.users.length + 1);
+    }
+    console.log(
+      "this.dealer:-------------------------------------------- ",
+      this.dealer
+    );
+    console.log(
+      "this.smallBlind:---------------------------------------- ",
+      this.smallBlind
+    );
+    console.log(
+      "this.bigBlind:------------------------------------------ ",
+      this.bigBlind
+    );
+    console.log(
+      "this.currentUser:--------------------------------------- ",
+      this.currentUser
+    );
   };
 
   DealPocketCards = () => {
@@ -329,7 +396,6 @@ class PokerTable {
   };
 
   UpdateUserState = (id, action, value) => {
-
     let index = this.users.findIndex((user) => user.userID == id);
     this.users[index].state = action;
     this.users[index].bet = value;
@@ -343,23 +409,36 @@ class PokerTable {
       this.currentUser = 0;
     }
 
-    console.log(this.users[this.currentUser]);
+    // console.log(this.users[this.currentUser]);
     //check if current user has folded
     if (this.users[this.currentUser].state == "fold") {
+     
       //find next user not folded
-      let lastUser = this.currentUser;
-      for (let i = lastUser; i < this.users.length; i++) {
-
-
-        if (this.users[i].state != "fold") {
-          this.currentUser = i;
-
-          i = this.users.length;
+      
+      let nextUser = this.currentUser +1;
+      for (let i = this.currentUser; i < this.users.length; i++) {
+       
+        if(nextUser < this.users.length)
+        {
+          if (this.users[i+1].state != "fold") {
+            this.currentUser = i;
+    
+              i = this.users.length;
+            }
         }
+        else
+        {
+          nextUser = 0;
+          if (this.users[nextUser+1].state != "fold") {
+            this.currentUser = i;
+    
+              i = this.users.length;
+            }
+        }
+       
+        
       }
     }
-
-
   };
 
   //check player saldo is above 0, else player is kicked from the pokertable

@@ -34,7 +34,6 @@ class PrivateRuleManager {
     let playerHands = [];
     //Adding playerhands to temp array
     for (let i = 0; i < pokerTable.users.length; i++) {
-      console.log("pokerTable.users[i]", pokerTable.users[i].userID);
       let userTempcards = [];
       userTempcards = pokerTable.users[i].pocketCards;
 
@@ -345,10 +344,6 @@ class PrivateRuleManager {
                 winnerHandsFlushFacesArray.push(winnerHands[winnerHands.length - 1].cardResult.sortedFaces[j]);
               }
             }
-            // console.log("highestHands.cardResult.shifts: ", highestHands[i].cardResult.sortedFaces);
-            // console.log("highestHandsFlushFacesArray: ", highestHandsFlushFacesArray);
-            // console.log("winnerHandsFlushFacesArray: ", winnerHandsFlushFacesArray);
-
 
             // checking arrays if the highest hands has a higher or equal flush than current winnerhand,
             // and changing or adding more hands if nessesary.
@@ -474,13 +469,11 @@ class PrivateRuleManager {
               && winnerHandsFour != 0) {
               winnerHands = [];
               winnerHands.push(highestHands[i]);
-              //console.log("winnerHands was smaller: ");
             }
             //If highest hand is equal to winnerhands or both has aces
             else if ((highestHandsFour == 0 && winnerHandsFour == 0)
               || (highestHandsFour == winnerHandsFour)) {
               winnerHands.push(highestHands[i]);
-              //console.log("winnerHands was equal: ");
             }
           }
           break;
@@ -494,10 +487,8 @@ class PrivateRuleManager {
           let counting = 0;
           if (i == 0) {
             winnerHands.push(highestHands[i]);
-            console.log("i: ", i);
           }
           else {
-            console.log("i: ", i);
             //Counting faces and adding them to array
             for (let j = 0; j < highestHands[i].cardResult.sortedFaces.length; j++) {
               if (highestHands[i].cardResult.sortedSuits[j]
@@ -511,10 +502,6 @@ class PrivateRuleManager {
                 winnerHandsFlushFacesArray.push(winnerHands[winnerHands.length - 1].cardResult.sortedFaces[j]);
               }
             }
-            console.log("highestHands[i].cardResult.sortedFaces: ", highestHands[i].cardResult.sortedFaces);
-            console.log("highestHands[i].cardResult.sortedSuits: ", highestHands[i].cardResult.sortedSuits);
-            console.log("highestHandsFlushFacesArray: ", highestHandsFlushFacesArray.length);
-            console.log("winnerHandsFlushFacesArray: ", winnerHandsFlushFacesArray.length);
 
             //Checking highestHandsFlushFacesArray for highest card in straight and afterwards
             // organizing the rest of the straight in an array to compare
@@ -552,13 +539,6 @@ class PrivateRuleManager {
               }
             }
           }
-          // console.log("highestHands[i].cardResult.sortedFaces: ", highestHands[i].cardResult.sortedFaces);
-          // console.log("highestHandsFlushFacesArray: ", highestHandsFlushFacesArray);
-          // console.log("winnerHandsFlushFacesArray: ", winnerHandsFlushFacesArray);
-          console.log("highestHandsStrightFlushArray: ", highestHandsStrightFlushArray);
-          console.log("winnerHandsStraightFlushArray: ", winnerHandsStraightFlushArray);
-          console.log("highestHandsStrightFlushKicker: ", highestHandsStrightFlushKicker);
-          console.log("winnerHandsStraightFlushKicker: ", winnerHandsStraightFlushKicker);
 
           //Checking if highestHandsStrightFlushArray contains highest straihght
           if (highestHands[0] == 0 && highestHandsStrightFlushArray[highestHandsStrightFlushArray.length - 1] == 12) {
@@ -594,11 +574,6 @@ class PrivateRuleManager {
       }
 
     }
-
-
-    console.log("all winnerHands: ", winnerHands);
-    //console.log("all realWinnerHands: ", realWinnerHands);
-    // console.log("winnerHands shifts: ", winnerHands[0].shifts);
     return winnerHands;
   }
 
@@ -613,11 +588,8 @@ class PrivateRuleManager {
   //This is the first analyzer, only to decide wich hands each player has. It will be compared afterwards in top of code
   //-------------------------------------------------------------------------------------
   AnalyzeHand = (hand, userID) => {
-    // console.log("Analyzing ------------------------------- Analyzing"); //DEBUG
     let faces = hand.map((card) => this.FACES.indexOf(card.slice(0, -1)));
     let suits = hand.map((card) => this.SUITS.indexOf(card.slice(-1)));
-    // console.log("faces: ", faces);
-    console.log("Suits: ", suits);
 
 
 
@@ -642,9 +614,6 @@ class PrivateRuleManager {
       }
 
     }
-
-    console.log("sortedFaces: ", sortedFaces);
-    console.log("sortedSuits: ", sortedSuits);
 
 
     //------------------------------------------------
@@ -686,7 +655,6 @@ class PrivateRuleManager {
         }
       }
     }
-    console.log("sfSuit: ", sfSuit);
 
     for (let i = 0; i < sfSuit.length; i++) {
       if (i == 0) {
@@ -701,51 +669,10 @@ class PrivateRuleManager {
         sfCounter = 0;
         sfCounter++
       }
-
-      console.log("sfCounter: ", sfCounter);
-      console.log("lastCount: ", lastCount);
     }
     if (sfCounter >= 5) {
       straightFlush = true;
     }
-
-    // sfArray.push(sortedFaces[sortedFaces.length - 1]);
-    // for (let i = 0; i < sortedFaces.length - 1; i++) {
-    //   if (sortedFaces[i] == sortedFaces[i + 1] - 1 && sortedSuits[i] == sortedSuits[i + 1]) {
-    //     sfCounter++
-    //     lastCount=sortedFaces[i] //Just to remember last face
-    //   }
-    //   if(sortedFaces[i]==lastCount+1 && sortedSuits[i] == sortedSuits[i + 1]){
-    //     sfCounter++
-    //   }
-    //   else if ((sortedFaces[i] != sortedFaces[i + 1] - 1 || sortedSuits[i] != sortedSuits[i + 1]) && sfCounter <= 2) {
-    //     sfCounter = 0;
-    //     sfCounter++
-    //   }
-    //   else if ((sortedFaces[i] != sortedFaces[i + 1] - 1 || sortedSuits[i] != sortedSuits[i + 1]) && sfCounter >= 2) {
-    //     sfCounter = sfCounter;
-    //   }
-    //   if (sfCounter >= 5) {
-    //     if (sortedFaces[sortedFaces.length - 1] == 12) {
-    //       if (sortedFaces[0] != 0) {
-    //         straightFlush = true;
-    //       }
-    //       else { straightFlush = false; }
-    //     }
-    //     else {
-    //       straightFlush = true;
-
-    //     }
-
-    //     console.log("sfSuit: ", sfSuit);
-    //     console.log("sfArray: ", sfArray);
-    //   }
-
-    // }
-    console.log("straightFlush: ", straightFlush);
-
-
-
 
 
     //------------------------------------------------
@@ -762,13 +689,7 @@ class PrivateRuleManager {
       ]);
       for (let i = 0; i < suitCounts.length; i++) {
         if (suitCounts[i][1] >= 5) {
-          //console.log("we got a flush!");
           suitType = suitCounts[i][0];
-
-          console.log("suitType: ", suitType);
-
-          //console.log("SuitCountInFlushCalculator: ",suitCounts[i][0]);
-          // console.log("suitcounts: ", suitCounts);
           return true;
         }
       }
@@ -788,7 +709,6 @@ class PrivateRuleManager {
     //calculating straight by first calculating the remainder of the value + 1 divided by 13.
     let shifted = faces.map((x) => (x + 1) % 13);
     let shiftedFlusher = faces.map((x) => (x + 1) % 13);
-    //console.log("shifted flusher ", shiftedFlusher); //DEBUG
 
 
     //-------------------------------------------------
@@ -797,35 +717,26 @@ class PrivateRuleManager {
     shifted.sort(function (a, b) {
       return a - b;
     });
-    //console.log("ascending order: ", shifted);
 
     let counter = 0;
     for (let i = 0; i < shifted.length; i++) {
       let currentValue = shifted[i];
       let nextValue = shifted[i + 1];
-      //console.log("current value ", currentValue);
       if (i + 1 == shifted.length) {
         nextValue = shifted[i] + 1;
       }
       //resetting counter if value is not following each other
       if (nextValue > currentValue + 1) {
         counter = 0;
-
-        //console.log("Resetting counter ", currentValue); //DEBUG
       }
       if (nextValue == currentValue + 1) {
         counter++;
-
-        //console.log("Counting! ", currentValue);
       }
     }
 
     let highestStraight = false;
     if (shifted[6] == 12 && shifted[0] == 0 && counter >= 4) {
       highestStraight = true;
-      //then straight
-      //console.log("highest Straight!");
-      //console.log("counter: ", counter);
     }
 
     // let straight = groups[0] === 1 && distance < 5;
@@ -837,14 +748,9 @@ class PrivateRuleManager {
     let aceSuitType;
     if (highestStraight) {
       aceSuitType = AceSplitter(this.SUITS);
-      //  console.log("Acesuit type: ", aceSuitType);
-      //  console.log("suit type: ", suitType);
-      //  console.log("original suits: ", this.SUITS);
       aceSuitTypeLetter = this.SUITS[aceSuitType];
-      // console.log("-------------------------------This is the type of the ace", aceSuitTypeLetter);
       if (this.SUITS[suitType] == aceSuitTypeLetter) {
         sameAceTypeAsFlush = true;
-        console.log("ace type is same as flush: ", sameAceTypeAsFlush);
       }
     }
 
@@ -852,12 +758,9 @@ class PrivateRuleManager {
     //Method to check if first card is an ace
     //-------------------------------------------------
     function AceSplitter(suits) {
-      // console.log("suits: " + suits);
       let ace = hand[0];
       let splittedAce = ace.split("");
       let indexNumber = suits.findIndex((element) => element == splittedAce[1]);
-      // console.log("splitted index: ", indexNumber);
-      // console.log("splitted value: ", splittedAce[1]);
       return indexNumber;
     };
     //-------------------------------------------------
@@ -872,7 +775,6 @@ class PrivateRuleManager {
     //-------------------------------------------------
     //Anti Straight Flush calculator
     //-------------------------------------------------
-    //console.log("counter: ", counter);
     let isFlushOnly = false;
     let possibleRoyalStraightFlush = false
     if (counter >= 4) {
@@ -885,7 +787,6 @@ class PrivateRuleManager {
         }
 
         let suitLetter = this.SUITS[flushSuit];
-        // console.log("suitLetter: ", suitLetter); //DEBUG
         let shallowCards = [];
         for (let i = 0; i < hand.length; i++) {
           let card = hand[i].split("");
@@ -894,10 +795,8 @@ class PrivateRuleManager {
             shifted: shiftedFlusher[i],
             cardSuit: card[card.length - 1],
           };
-          //  console.log("cardObject: ", cardObject); //DEBUG
           shallowCards.push(cardObject);
         }
-        console.log("shallowCards: ", shallowCards); //DEBUG
 
         let tempArray = [];
         for (let index = 0; index < shallowCards.length; index++) {
@@ -907,12 +806,6 @@ class PrivateRuleManager {
         }
 
 
-
-
-
-        // console.log("temp array length: ", tempArray.length); //DEBUG
-        // console.log("TempArray: before sorting: ", tempArray); //DEBUG
-
         //Sorting the array ascending
         tempArray.sort(function (a, b) {
           return a - b;
@@ -921,8 +814,6 @@ class PrivateRuleManager {
         if (tempArray[tempArray.lenght - 1] == 12) {
           possibleRoyalStraightFlush = true;
         }
-        console.log("TempArray: ascending order: ", tempArray); //DEBUG
-        console.log("possibleRoyalStraightFlush: ", possibleRoyalStraightFlush); //DEBUG
 
         let counter1 = 0;
         for (let i = 0; i < tempArray.length; i++) {
@@ -937,54 +828,17 @@ class PrivateRuleManager {
             counter1++;
           }
         }
-        console.log("shallowCardsCounter: ", counter1); //DEBUG
 
 
         if ((counter1 == 4 && !sameAceTypeAsFlush) || counter1 < 4) {
           isFlushOnly = true;
 
         }
-        console.log("isFlushOnly: ", isFlushOnly); //DEBUG
       }
     }
 
 
 
-    //-------------------------------------------------
-    //-------------------------------------------------
-
-
-    //-------------------------------------------------
-    //Logging
-    //-------------------------------------------------
-
-
-    //console.log("groups: ", groups);
-
-    // console.log(
-    //   "is it straight: ",
-    //   straight +
-    //   ", flush: " +
-    //   flush +
-    //   ", is ace same: " +
-    //   sameAceTypeAsFlush +
-    //   ", higest straight: " +
-    //   highestStraight +
-    //   ", isFlushOnly: " +
-    //   isFlushOnly
-    // );
-
-    // console.log("shifted[0]: ", shifted[0]);
-    // console.log("shifted[1]: ", shifted[1]);
-    // console.log("shifted[2]: ", shifted[2]);
-    // console.log("shifted[3]: ", shifted[3]);
-    // console.log("shifted[4]: ", shifted[4]);
-    // console.log("shifted[5]: ", shifted[5]);
-    // console.log("shifted[6]: ", shifted[6]);
-    // console.log( "-----------------------------------------------------------------------------------"
-    //   //-------------------------------------------------
-    //   //-------------------------------------------------
-    // );
 
     //analysing hand, returns string with hand title
     let result =
@@ -1008,7 +862,7 @@ class PrivateRuleManager {
                         ? { userID: userID, handName: "one-pair", handValue: 2, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits }
                         : { userID: userID, handName: "high-card", handValue: 1, shift: shifted, high: this.highest, low: this.lowest, kick: this.kicker, shifts: this.shifts, counts: this.counts, sortedFaces: sortedFaces, sortedSuits: sortedSuits };
 
-    // console.log("result: ",result);
+
     return result;
 
   };
@@ -1022,17 +876,12 @@ class PrivateRuleManager {
         this.shifts.push(index);
         this.counts.push(1);
         previousIndex = index;
-        // console.log("previousIndex: ",previousIndex); //DEBUG
-        // console.log("index: ",index); //DEBUG
       }
       else {
         this.counts[this.counts.length - 1]++;
         previousIndex = index;
       }
     }
-    // console.log("CountShifted Shifts: ", shifted); //DEBUG
-    console.log("Count Shifts: ", this.shifts); //DEBUG
-    console.log("Count counts: ", this.counts); //DEBUG
 
     return [this.shifts, this.counts];//Fields
   }
@@ -1082,9 +931,6 @@ class RuleManager {
 
 }
 
-
-
-// for(hand of testHands) console.log(hand + ": " + analyzeHand(hand));
 
 module.exports = { RuleManager };
 

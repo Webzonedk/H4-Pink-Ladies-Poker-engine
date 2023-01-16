@@ -22,7 +22,7 @@ class privateEncryption {
       data
     );
 
-    console.log("encypted data: ", encryptedData.toString('base64'));
+   // console.log("encypted data: ", encryptedData.toString('base64'));
    // console.log("encypted data: ", encryptedData);
       //establish websocket connection
       this.WebSocket.GetInstance().InitializeServer();
@@ -41,7 +41,7 @@ class privateEncryption {
 
   //Symetric encryption to be used when both app and api has the AES keys
   EncryptAES = (dataToEncrypt) => {
-    console.log(dataToEncrypt);
+   // console.log(dataToEncrypt);
     let cipher = crypto.createCipheriv(this.algorithm, this.key, this.iv);
     let buffer = Buffer.from(JSON.stringify(dataToEncrypt));
     let encryptedData = cipher.update(buffer);

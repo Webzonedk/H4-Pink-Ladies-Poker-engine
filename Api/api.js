@@ -45,9 +45,9 @@ app.post("/api/CreateUser", (req, res) => {
   
  // let encryptedBytes = Buffer.from(userName,'base64');
   const decryptedUser = Encryption.GetInstance().DecryptAES(userName);
-  
+  console.log(decryptedUser);
   const lobbySingleton = Lobby.GetInstance();
-  lobbySingleton.CreateUser(decryptedUser);
+  lobbySingleton.CreateUser(decryptedUser.userName);
 
 
   console.log("users: ", lobbySingleton.pokerTables[0].users.length);

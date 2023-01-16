@@ -24,8 +24,8 @@ class privateWebSocket{
 
      SendMessage = (pokerTable) =>{
 
-      console.log("message sent ------------------------------------------------------------------")
-        console.log(pokerTable);
+      //console.log("message sent ------------------------------------------------------------------")
+       // console.log(pokerTable);
         this.webSocketServer.clients.forEach((client) => {
             client.send(pokerTable);
         });
