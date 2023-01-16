@@ -9,6 +9,7 @@ class PokerTable {
   bets = [];
   collectiveCards = [];
   cardDeck = [];
+  winners = [];
   dealer;
   smallBlind;
   bigBlind;
@@ -138,19 +139,21 @@ class PokerTable {
                   console.log("ready to analyze");
 
                   //compare all hands
+                  this.winners = [];
                   let snapshot = this.CreateSnapshot();
-                  let filteredSnapshot = snapshot.users.filter((user) => user.pocketCards.length > 1);
-                  snapshot.users = filteredSnapshot;
-                  let winners = [];
-                  //winners = this.RuleManager.GetInstance().CompareHands(filteredSnapshot);
-
+                  let filteredUsers = snapshot.users.filter((user) => user.pocketCards.length > 1);
+                  snapshot.users = filteredUsers;
+                  winners = this.RuleManager.GetInstance().CompareHands(snapshot);
 
                   //distribute totalPot
                   let fractionPot = this.totalPot / winners.length;
                   for (let i = 0; i < winners.length; i++) {
+                    
 
-                    winners[i].saldo += fractionPot;
-                    console.log(`user: ${winners[i].userName} won by: ${winners[i]}`)
+                     let index = users.findIndex((user) => user.userID == winners[i].cardResult.userID);
+
+                    users[index].saldo += fractionPot;
+                    console.log(`user: ${users[index].userName} won with: ${winners[i].cardResult.handName}`);
                   }
 
                   //kick players with zero saldo
@@ -244,6 +247,7 @@ class PokerTable {
     this.bets = [];
     this.collectiveCards = [];
     this.cardDeck = [];
+    this.winners = [];
   }
 
   //local helper method for calculating betting
@@ -261,6 +265,7 @@ class PokerTable {
       bets: this.bets,
       collectiveCards: this.collectiveCards,
       cardDeck: this.cardDeck,
+      winners: this.winners,
       dealer: this.dealer,
       smallBlind: this.smallBlind,
       bigBlind: this.bigBlind,

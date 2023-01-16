@@ -95,17 +95,20 @@ class PrivateRuleManager {
   //----------------------------------------------------
   FindHighestHand = (highestHands) => {
     let winnerHands = [];
-
+    
     for (let i = 0; i < highestHands.length; i++) {
       let shiftCount = this.CountShifted(highestHands[i].cardResult.shift);
       highestHands[i].cardResult.shifts = shiftCount[0]
       highestHands[i].cardResult.counts = shiftCount[1]
-
+      
       switch (highestHands[i].cardResult.handValue) {
-
-        case 1: //Highest card: itterating through array of highestHands, 
-        //compairning them, to find the hihgest hand.
+        
+        //----------------------------------------------------
+        //Highest card: itterating through array of highestHands, 
+        //compairing them, to find the hihgest hand and adding them to the winnerHand array.
         // Note!!!! Kicker is not found if two players have the same highest hand.
+        //----------------------------------------------------
+        case 1:
           if (i == 0) {
             winnerHands.push(highestHands[i]);
           }
