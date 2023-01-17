@@ -24,6 +24,7 @@ class PrivateCardDeckManager {
     this.cardSuits = ["H", "D", "C", "S"];
 
   };
+  //Factory to create, mix, and returning a new card deck when called.
   NewCardDeck = () => {
     for (let i = 0; i < this.cardSuits.length; i++) {
       for (let j = 0; j < this.cardValues.length; j++) {
@@ -37,11 +38,7 @@ class PrivateCardDeckManager {
       let selectedCard = getRandomCardFromCardDeck(this.cardDeck.length);
       this.mixedCardDeck.push(this.cardDeck[selectedCard]);
       this.cardDeck.splice(selectedCard, 1);
-      //console.log(selectedCard);
-      //console.log("cardDeck: " + this.cardDeck);
     }
-   // console.log("carddeck length: ", this.cardDeck.length);
-   // console.log("mixedCardDeck: " + this.mixedCardDeck);
 
     // local function to get random number within cardDeck length
     function getRandomCardFromCardDeck(max) {
