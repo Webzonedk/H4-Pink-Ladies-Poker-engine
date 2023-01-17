@@ -597,7 +597,6 @@ class PrivateRuleManager {
     //straight flush calculator
     //------------------------------------------------
     let straightFlush = false;
-    let sfArray = [];
     let Array0 = [];
     let Array1 = [];
     let Array2 = [];
