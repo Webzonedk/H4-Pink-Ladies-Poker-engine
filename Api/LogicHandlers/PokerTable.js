@@ -413,12 +413,12 @@ class PokerTable {
     //check if current user has folded
     if (this.users[this.currentUser].state == "fold") {
      
-      //find next user not folded
       
-      let nextUser = this.currentUser +1;
+      
+      //find next user not folded
       for (let i = this.currentUser; i < this.users.length; i++) {
        
-        if(nextUser < this.users.length)
+        if(i < this.users.length-1)
         {
           if (this.users[i+1].state != "fold") {
             this.currentUser = i;
@@ -428,8 +428,8 @@ class PokerTable {
         }
         else
         {
-          nextUser = 0;
-          if (this.users[nextUser+1].state != "fold") {
+          
+          if (this.users[0].state != "fold") {
             this.currentUser = i;
     
               i = this.users.length;
