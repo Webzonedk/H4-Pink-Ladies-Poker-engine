@@ -37,6 +37,12 @@ class PokerTable {
 
   //run the entire game loop
   RunGame = () => {
+
+    //send snapshot
+    
+    let snapshot = this.CreateSnapshot();
+    this.Encryption.GetInstance().EncryptAES(snapshot);
+
     //observing how many users has attended, and reset timer when new user arrive
     if (this.waitingTimer > 0) {
       //evaluate if enough players is present to start the game
@@ -62,7 +68,7 @@ class PokerTable {
           console.log(this.waitingTimer);
 
           //start the game when countdown timer is zero
-          if (this.waitingTimer <= 0 ) {
+          if (this.waitingTimer <= 0) {
             //this.waitingTimer = 10;
             this.ClearCurrentInterval(CountdownTimer);
 
@@ -92,18 +98,18 @@ class PokerTable {
 
             if (this.round > 0) {
               //check when every player has had their turn
-             // let roundIsDone = false;
+              // let roundIsDone = false;
               let playerChecker = setInterval(() => {
                 //stop loop if one player remains
                 if (this.users.length < 2) {
                   this.ClearCurrentInterval(playerChecker);
                   this.round = 4;
                 }
-                  console.log("checking users----------------------------------------------")
-                  for (let i = 0; i < this.users.length; i++) {
-                    console.log("username: " + this.users[i].userName + " index: "+ i + " action: " + this.users[i].state);
-                    
-                  }
+                console.log("checking users----------------------------------------------")
+                for (let i = 0; i < this.users.length; i++) {
+                  console.log("username: " + this.users[i].userName + " index: " + i + " action: " + this.users[i].state);
+
+                }
                 //check if all users are done with their turn
                 if (!this.users.find((user) => user.state == " ")) {
                   console.log("all done!");
@@ -412,31 +418,29 @@ class PokerTable {
     // console.log(this.users[this.currentUser]);
     //check if current user has folded
     if (this.users[this.currentUser].state == "fold") {
-     
-      
-      
+
+
+
       //find next user not folded
       for (let i = this.currentUser; i < this.users.length; i++) {
-       
-        if(i < this.users.length-1)
-        {
-          if (this.users[i+1].state != "fold") {
+
+        if (i < this.users.length - 1) {
+          if (this.users[i + 1].state != "fold") {
             this.currentUser = i;
-    
-              i = this.users.length;
-            }
+
+            i = this.users.length;
+          }
         }
-        else
-        {
-          
+        else {
+
           if (this.users[0].state != "fold") {
             this.currentUser = i;
-    
-              i = this.users.length;
-            }
+
+            i = this.users.length;
+          }
         }
-       
-        
+
+
       }
     }
   };
