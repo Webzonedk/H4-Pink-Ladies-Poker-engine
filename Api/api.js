@@ -57,7 +57,7 @@ app.post("/api/CreateUser", (req, res) => {
 
 //user interactions
 app.post("/api/Useraction", (req, res) => {
-  const encryptedUserAction = req.body;
+  const encryptedUserAction = req.body.data;
   
   const decryptedUserAction = Encryption.GetInstance().DecryptAES(encryptedUserAction);
   console.log(decryptedUserAction);
@@ -79,36 +79,17 @@ app.post("/api/PlayAgain", (req, res) => {
   res.status(200).send("replay!");
 });
 
-//leave poker table
 
-// const encryptedUserID = req.body.userID;
-// const decryptedUserID = encryption.DecryptAES(encryptedUserID);
+//leave poker table
 app.post('/api/LeaveTable', (req, res) => {
 
-  //test encrypted user
-  const user = req.body;
-  //console.log(user);
-  const encrypted = Encryption.GetInstance().EncryptAES(user);
-  const decryptedUserID = Encryption.GetInstance().DecryptAES(encrypted);
-
-
-
-
-
-  // const encryptedUserID = req.body.userID;
-  // const decryptedUserID = encryption.DecryptAES(encryptedUserID);
-
-  //find pokertable with user that has userID N
-
-  // let user = Lobby.GetInstance().pokerTables[i].users.find((userID) => userID ===userID );
-
-  Lobby.GetInstance().pokerTables[user.tableID].LeavePokerTable(user.userID);
+  
+  const user = req.body.data;
+  const decryptedUser = Encryption.GetInstance().DecryptAES(user);
 
   //execute method to remove user from table
-
-  //pokerTableSingleton.LeavePokerTable(decryptedUserID);
-  console.log("waiting users: ", Lobby.GetInstance().waitingUsers);
-  //pokerTableSingleton.LeavePokerTable(decryptedUserID);
+  Lobby.GetInstance().pokerTables[decryptedUser.tableID].LeavePokerTable(decryptedUser.userID);
+  
   console.log("waiting users: ", Lobby.GetInstance().waitingUsers);
   res.status(200).send("replay!");
 });

@@ -31,7 +31,7 @@ class PokerTable {
     this.totalPot = 0;
     this.currentUser = 0;
     this.round = 0;
-    this.waitingTimer = 10;
+    this.waitingTimer = 20;
     this.gameRunning = true;
   }
 
@@ -63,9 +63,10 @@ class PokerTable {
 
       //count down if players are above 1 & this is the game loop
       let CountdownTimer = setInterval(() => {
+       
         if (aboveOne) {
           this.waitingTimer -= 1;
-          console.log(this.waitingTimer);
+          console.log("timer: ",this.waitingTimer);
 
           //start the game when countdown timer is zero
           if (this.waitingTimer <= 0) {
@@ -182,7 +183,7 @@ class PokerTable {
                   // this.RunGame();
                   this.gameRunning = false;
                 }
-              }, 500);
+              }, 2000);
 
               //change turn every 5 second
               let turnChanger = setInterval(() => {
@@ -266,7 +267,7 @@ class PokerTable {
     this.totalPot = 0;
     this.currentUser = 0;
     this.round = 0;
-    this.waitingTimer = 5;
+    this.waitingTimer = 10;
     this.bets = [];
     this.collectiveCards = [];
     this.cardDeck = [];
