@@ -31,7 +31,7 @@ class PokerTable {
     this.totalPot = 0;
     this.currentUser = 0;
     this.round = 0;
-    this.waitingTimer = 20;
+    this.waitingTimer = 5;
     this.gameRunning = true;
   }
 
@@ -154,9 +154,8 @@ class PokerTable {
                     (user) => user.pocketCards.length > 1
                   );
                   snapshot.users = filteredUsers;
-                  //  console.log(snapshot);
-                  this.winners =
-                    this.RuleManager.GetInstance().CompareHands(snapshot);
+                    console.log(snapshot);
+                  this.winners = this.RuleManager.GetInstance().CompareHands(snapshot);
 
                   //distribute totalPot
                   let fractionPot = this.totalPot / this.winners.length;
@@ -183,7 +182,7 @@ class PokerTable {
                   // this.RunGame();
                   this.gameRunning = false;
                 }
-              }, 2000);
+              }, 100/15);
 
               //change turn every 5 second
               let turnChanger = setInterval(() => {
@@ -250,7 +249,7 @@ class PokerTable {
                     this.ClearCurrentInterval(turnChanger);
                   }
                 }
-              }, 500);
+              }, 5000);//every user has 20 seconds to make an action
             }
           }
         }

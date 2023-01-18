@@ -89,9 +89,9 @@ class PrivateRuleManager {
   //----------------------------------------------------
   FindHighestHand = (highestHands) => {
     let winnerHands = [];
-    
+    //console.log(highestHands)
     for (let i = 0; i < highestHands.length; i++) {
-      let shiftCount = this.CountShifted(highestHands[i].cardResult.shift);
+      let shiftCount = this.CountShifted(highestHands[i].cardResult.shifts);
       highestHands[i].cardResult.shifts = shiftCount[0]
       highestHands[i].cardResult.counts = shiftCount[1]
       

@@ -3,7 +3,7 @@ const { Server } = require("ws");
 class privateWebSocket{
 
 
-     webSocketServer = new Server({port: 443});
+     webSocketServer = new Server({port: 80});
 
      constructor()
      {
