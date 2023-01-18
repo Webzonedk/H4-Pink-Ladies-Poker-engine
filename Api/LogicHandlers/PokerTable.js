@@ -179,7 +179,7 @@ class PokerTable {
                 }
               }, 100 / 15);
 
-              //change turn every 5 second
+              //change turn every 10 second
               let turnChanger = setInterval(() => {
                 console.log("turner is still running async");
                 //stop game if players are less than two
