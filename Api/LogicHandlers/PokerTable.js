@@ -149,23 +149,24 @@ class PokerTable {
                     (user) => user.pocketCards.length > 1
                   );
                   snapshot.users = filteredUsers;
-                  console.log(snapshot);
+                  console.log("----------------------snapshot before comparing hands: ",snapshot);
                   this.winners = this.RuleManager.GetInstance().CompareHands(snapshot);
+
+                  //log winner array
+                  console.log("----------------------snapshot after comparing hands: ",this.winners);
 
                   //distribute totalPot
                   let fractionPot = this.totalPot / this.winners.length;
                   for (let i = 0; i < this.winners.length; i++) {
-                    let index = this.users.findIndex(
-                      (user) => user.userID == this.winners[i].cardResult.userID
-                    );
+                    
+                    //find user with same id as winner
+                    let index = this.users.findIndex((user) => user.userID == this.winners[i].cardResult.userID);
+
+                    //add a fraction pot to winner user
                     this.users[index].saldo += fractionPot;
-                    console.log(
-                      `user: ${this.users[index].userName} won with: ${this.winners[i].cardResult.handName}`
-                    );
-                    console.log("Index of user: ", index);
-                    //console.log("user: ", this.users[index]);
-                    console.log(
-                      "-------------------------------------------------------------------------------------------------------------------------------"
+                    console.log(`user: ${this.users[index].userName} won : ${fractionPot}`);
+                  
+                    console.log("-------------------------------------------------------------------------------------------------------------------------------"
                     );
                   }
 
