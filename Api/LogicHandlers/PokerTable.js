@@ -21,6 +21,8 @@ class PokerTable {
   waitingTimer;
   gameRunning;
   currentHandNumber;
+  userTurnTimer;
+  userHasDecided = false;
 
   constructor() {
     this.dealer = 0;
@@ -39,7 +41,7 @@ class PokerTable {
   RunGame = () => {
 
     //send snapshot
-    
+
     let snapshot = this.CreateSnapshot();
     this.Encryption.GetInstance().EncryptAES(snapshot);
 
@@ -56,17 +58,17 @@ class PokerTable {
 
         //stop checkUserTimer when countdown is zero
         if (this.waitingTimer <= 0) {
-          console.log("kill");
+          console.log("kill timer");
           this.ClearCurrentInterval(checkUserTimer);
         }
       }, 100 / 15);
 
       //count down if players are above 1 & this is the game loop
       let CountdownTimer = setInterval(() => {
-       
+
         if (aboveOne) {
           this.waitingTimer -= 1;
-          console.log("timer: ",this.waitingTimer);
+          console.log("timer: ", this.waitingTimer);
 
           //start the game when countdown timer is zero
           if (this.waitingTimer <= 0) {
@@ -87,33 +89,25 @@ class PokerTable {
             let snapshot = this.CreateSnapshot();
             this.Encryption.GetInstance().EncryptAES(snapshot);
 
-            //activate check for players that no longer is playable
-            // let kickLoop = setInterval(() => {
-            //   this.VerifyOrKickPlayer();
-
-            //   //stop kickLoop when users are below 2
-            //   if (this.users.length < 2) {
-            //     this.ClearCurrentInterval(kickLoop);
-            //   }
-            // }, 1000);
-
+            
+              //clear timer if user has decided
             if (this.round > 0) {
+              if(this.userHasDecided)
+              {
+                this.ClearCurrentInterval(this.userTurnTimer);
+                this.userHasDecided = false;
+              }
               //check when every player has had their turn
-              // let roundIsDone = false;
-              let playerChecker = setInterval(() => {
+              this.userTurnTimer = setInterval(() => {
                 //stop loop if one player remains
                 if (this.users.length < 2) {
-                  this.ClearCurrentInterval(playerChecker);
+                  this.ClearCurrentInterval(this.userTurnTimer);
                   this.round = 4;
                 }
-                console.log("checking users----------------------------------------------")
-                for (let i = 0; i < this.users.length; i++) {
-                  console.log("username: " + this.users[i].userName + " index: " + i + " action: " + this.users[i].state);
-
-                }
+                
                 //check if all users are done with their turn
                 if (!this.users.find((user) => user.state == " ")) {
-                  console.log("all done!");
+                  console.log("all users are done!");
 
                   //deal cards for next round
                   this.DealCards();
@@ -130,6 +124,7 @@ class PokerTable {
 
                   //set total pot
                   this.totalPot += this.totalBet;
+                  console.log("total bet: "+ this.totalBet + " total pot: "+ this.totalPot);
                   this.totalBet = 0;
 
                   //set next round
@@ -141,7 +136,7 @@ class PokerTable {
 
                 //stop the round and analyze the hands
                 if (this.round > 3) {
-                  this.ClearCurrentInterval(playerChecker);
+                  this.ClearCurrentInterval(this.userTurnTimer);
                   console.log(
                     "-------------------------------------------------------------------------------------------------------------------------------"
                   );
@@ -154,7 +149,7 @@ class PokerTable {
                     (user) => user.pocketCards.length > 1
                   );
                   snapshot.users = filteredUsers;
-                    console.log(snapshot);
+                  console.log(snapshot);
                   this.winners = this.RuleManager.GetInstance().CompareHands(snapshot);
 
                   //distribute totalPot
@@ -177,12 +172,11 @@ class PokerTable {
                   //kick players with zero saldo
                   this.VerifyOrKickPlayer();
 
-                  //reset game and start new game
-                  this.ResetGame();
+
                   // this.RunGame();
                   this.gameRunning = false;
                 }
-              }, 100/15);
+              }, 100 / 15);
 
               //change turn every 5 second
               let turnChanger = setInterval(() => {
@@ -196,45 +190,48 @@ class PokerTable {
                 if (!this.gameRunning) {
                   this.currentHandNumber++;
                   this.ClearCurrentInterval(turnChanger);
+                  //reset game and start new game
+                  this.ResetGame();
                   this.RunGame();
                 }
 
                 //allow this code if there are users on the poker table
                 if (this.users.length > 0) {
-                  //if round 1 bet from big blind & small blind
-                  if (this.round == 1) {
-                    if (this.smallBlind == this.currentUser) {
-                      this.users[this.currentUser].state = "bet";
-                      this.users[this.currentUser].bet = 25;
-                    } else if (this.bigBlind == this.currentUser) {
-                      this.users[this.currentUser].state = "bet";
-                      this.users[this.currentUser].bet = 50;
-                    }
-                  }
-
-                  //set user interaction
-                  let action = this.users[this.currentUser].state;
-                  switch (action) {
-                    case " ":
-                      this.users[this.currentUser].state = "fold";
-                      break;
-                    case "fold":
-                      this.users[this.currentUser].pocketCards = [];
-                      break;
-                    case "check":
-                      break;
-                    case "bet":
-                      this.CalculateBet();
-                      break;
-                    case "call":
-                      this.CalculateBet();
-                      break;
-                    case "raise":
-                      this.CalculateBet();
-                      break;
-                    default:
-                      break;
-                  }
+                  
+                  // //if round 1 bet from big blind & small blind
+                  // if (this.round == 1) {
+                  //   if (this.smallBlind == this.currentUser) {
+                  //     this.users[this.currentUser].state = "bet";
+                  //     this.users[this.currentUser].bet = 25;
+                  //   } else if (this.bigBlind == this.currentUser) {
+                  //     this.users[this.currentUser].state = "bet";
+                  //     this.users[this.currentUser].bet = 50;
+                  //   }
+                  // }
+                  // console.log("user interaction");
+                  // //set user interaction
+                  // let action = this.users[this.currentUser].state;
+                  // switch (action) {
+                  //   case " ":
+                  //     this.users[this.currentUser].state = "fold";
+                  //     break;
+                  //   case "fold":
+                  //     this.users[this.currentUser].pocketCards = [];
+                  //     break;
+                  //   case "check":
+                  //     break;
+                  //   case "bet":
+                  //     this.CalculateBet();
+                  //     break;
+                  //   case "call":
+                  //     this.CalculateBet();
+                  //     break;
+                  //   case "raise":
+                  //     this.CalculateBet();
+                  //     break;
+                  //   default:
+                  //     break;
+                  // }
 
                   //next turn
                   this.SetCurrentUser();
@@ -249,7 +246,7 @@ class PokerTable {
                     this.ClearCurrentInterval(turnChanger);
                   }
                 }
-              }, 5000);//every user has 20 seconds to make an action
+              }, 10000);//every user has 20 seconds to make an action
             }
           }
         }
@@ -280,7 +277,8 @@ class PokerTable {
 
   //local helper method for calculating betting
   CalculateBet = () => {
-    let bet = this.users[this.currentUser].bet;
+    let bet = parseFloat(this.users[this.currentUser].bet) ;
+    console.log("current bet " + bet);
     this.totalBet += bet;
     this.users[this.currentUser].saldo -= bet;
     this.currentBet = bet;
@@ -404,7 +402,55 @@ class PokerTable {
   UpdateUserState = (id, action, value) => {
     let index = this.users.findIndex((user) => user.userID == id);
     this.users[index].state = action;
-    this.users[index].bet = value;
+    this.users[index].bet = parseFloat(value) ;
+
+     //if round 1 bet from big blind & small blind
+     if (this.round == 1) {
+      if (this.smallBlind == this.currentUser) {
+        this.users[this.currentUser].state = "bet";
+        this.users[this.currentUser].bet = 25;
+      } else if (this.bigBlind == this.currentUser) {
+        this.users[this.currentUser].state = "bet";
+        this.users[this.currentUser].bet = 50;
+      }
+    }
+    console.log("user interaction");
+    //set user interaction
+    let useraction = this.users[this.currentUser].state;
+    switch (useraction) {
+      case " ":
+        this.users[this.currentUser].state = "fold";
+        break;
+      case "fold":
+        this.users[this.currentUser].pocketCards = [];
+        break;
+      case "check":
+        break;
+      case "bet":
+        this.CalculateBet();
+        break;
+      case "call":
+        this.CalculateBet();
+        break;
+      case "raise":
+        this.CalculateBet();
+        break;
+      default:
+        break;
+    }
+
+    //set bool indicating all users has interacted
+    if(this.currentUser < this.users.length)
+    {
+      //next turn
+      this.SetCurrentUser();
+      this.userHasDecided = true;
+
+       //send snapshot
+    let snapshot = this.CreateSnapshot();
+    this.Encryption.GetInstance().EncryptAES(snapshot);
+    }
+   
   };
 
   //Set next user index

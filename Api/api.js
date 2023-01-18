@@ -169,7 +169,7 @@ console.log("final result in api", result)
 //test websocket
 app.post("/api/sendMessage", (req, res) => {
   let message = req.body;
-  console.log(message);
+ // console.log(message);
   // let data = Buffer.from(JSON.stringify(message));
   //Websocket.GetInstance().SendMessage(data);
   Encryption.GetInstance().EncryptAES(message);
